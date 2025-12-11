@@ -43,7 +43,7 @@ Google Maps Platform Documentation & Code Samples
 ### 1. Clone and Setup
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/PeterJBurke/google-maps-mcp-server.git
 cd google-maps-mcp-server
 npm install
 ```

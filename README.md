@@ -43,12 +43,18 @@ Google Maps Platform Documentation & Code Samples
 
 Set up once, then every push to the repository automatically deploys:
 
-1. **Set up GitHub Secrets:**
+1. **Set up GitHub Secrets (Secure - Not Stored in Repository):**
    - Go to your repository: https://github.com/PeterJBurke/google-maps-mcp-server
    - Settings → Secrets and variables → Actions
    - Add secrets:
      - `GCP_PROJECT_ID`: Your Google Cloud project ID
      - `GCP_SA_KEY`: Service account key JSON (see [GitHub Actions Setup](#github-actions-setup) below)
+   
+   **Security Note:** GitHub Secrets are encrypted and stored separately by GitHub. They are:
+   - ✅ NOT stored in your repository code
+   - ✅ NOT visible in logs or repository history
+   - ✅ Only accessible to GitHub Actions workflows
+   - ✅ Safe to use even in public repositories
 
 2. **Deploy automatically:**
    - Push to `main` or `master` branch → automatically deploys
@@ -187,6 +193,7 @@ Common issues:
 
 - [Detailed Deployment Guide](docs/DEPLOYMENT.md)
 - [OpenAI Platform Setup](docs/OPENAI_SETUP.md)
+- [Security Guide](docs/SECURITY.md) - **Important: Read about GitHub Secrets security**
 - [Troubleshooting Guide](docs/TROUBLESHOOTING.md)
 - [Google Maps Platform MCP Documentation](https://developers.google.com/maps/ai/mcp)
 

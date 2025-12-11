@@ -303,6 +303,15 @@ gcloud iam service-accounts keys create key.json \
 
 ### 4. Add to GitHub Secrets
 
+**Important Security Information:**
+- GitHub Secrets are encrypted and stored separately by GitHub
+- They are NOT stored in your repository code
+- They are NOT visible in logs, commit history, or pull requests
+- They are only accessible to GitHub Actions workflows
+- This is safe to use even in public repositories
+
+**Steps:**
+
 1. Go to your repository: https://github.com/PeterJBurke/google-maps-mcp-server
 2. Navigate to: **Settings** → **Secrets and variables** → **Actions**
 3. Click **New repository secret**
@@ -311,6 +320,8 @@ gcloud iam service-accounts keys create key.json \
      - **Value**: Your Google Cloud project ID
    - **Name**: `GCP_SA_KEY`
      - **Value**: Contents of the `key.json` file (copy the entire JSON)
+
+**After adding secrets, you can safely delete the `key.json` file from your local machine.**
 
 ### 5. Deploy Automatically
 

@@ -62,10 +62,10 @@ Set up once, then every push to the repository automatically deploys:
 
 2. **Deploy automatically:**
    - **Automatic**: Push code to `main` or `master` branch → automatically deploys
-   - **Manual trigger**: 
-     - Go to repository → Click **"Actions"** tab (at the top)
-     - Click **"Deploy to Cloud Run"** in the left sidebar
-     - Click **"Run workflow"** button → Select branch → Click **"Run workflow"**
+   - **Manual trigger** (to deploy without pushing code):
+     - Go to repository → Click **"Actions"** tab at the TOP (in main navigation, not Settings)
+     - In left sidebar, click **"Deploy to Cloud Run"**
+     - Click **"Run workflow"** button (top right) → Select branch → Click **"Run workflow"**
 
 **Note:** The deployment builds the Docker image in Google Cloud Build automatically. No local tools needed!
 

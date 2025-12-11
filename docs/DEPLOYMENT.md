@@ -418,15 +418,20 @@ Now you need to add roles to the service account you just created:
 If you want to trigger a deployment without pushing code:
 
 1. Go to your repository: https://github.com/PeterJBurke/google-maps-mcp-server
-2. Click on the **"Actions"** tab at the top of the repository (next to "Pull requests", "Projects", etc.)
-3. In the left sidebar, you'll see a list of workflows - click on **"Deploy to Cloud Run"**
-4. You'll see a list of workflow runs (if any) and a button on the right side that says **"Run workflow"**
-5. Click the **"Run workflow"** button (it's a dropdown button)
-6. A dropdown will appear:
-   - Make sure **"Use workflow from"** shows `Branch: master` (or `Branch: main`)
-   - Click the green **"Run workflow"** button in the dropdown
-7. The workflow will start running - you'll see it appear in the workflow runs list
-8. Click on the new workflow run to see the deployment progress in real-time
+2. **Important:** Look at the TOP of the repository page (not in Settings)
+   - You'll see tabs: **Code**, **Issues**, **Pull requests**, **Actions**, **Projects**, **Wiki**, **Security**, **Insights**, **Settings**
+   - Click on the **"Actions"** tab (this is different from Settings → Actions)
+3. You'll now be on the Actions page showing workflow runs
+4. In the **left sidebar**, you'll see a list of workflows
+   - Look for **"Deploy to Cloud Run"** and click on it
+5. On the right side of the page, you'll see a button that says **"Run workflow"** (it's a dropdown button with a small arrow)
+6. Click the **"Run workflow"** button
+7. A dropdown panel will appear on the right side with options:
+   - **"Use workflow from"** dropdown - make sure it shows `Branch: master` (or `Branch: main` if your default branch is main)
+   - A green **"Run workflow"** button at the bottom of the panel
+8. Click the green **"Run workflow"** button in the panel
+9. The panel will close and you'll see a new workflow run appear in the list
+10. Click on the new workflow run (it will show as "queued" or "in progress") to watch the deployment progress in real-time
 
 ## Next Steps
 

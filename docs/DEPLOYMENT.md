@@ -413,6 +413,17 @@ Now you need to add roles to the service account you just created:
 - GitHub Actions will automatically detect the push and start the deployment
 - Go to the **Actions** tab to watch the deployment progress
 
+**Monitoring Deployment:**
+
+1. Go to repository → Click **"Actions"** tab (at the top)
+2. You'll see a list of workflow runs
+3. Click on the latest run to see progress:
+   - **Yellow circle** = In progress
+   - **Green checkmark** = Success
+   - **Red X** = Failed (see [Troubleshooting](../docs/TROUBLESHOOTING.md#github-actions-workflow-fails) for help)
+4. Click on the **"deploy"** job to see detailed logs for each step
+5. Once complete, the workflow will show your service URL in the output
+
 **Manual Deployment (Trigger Manually):**
 
 If you want to trigger a deployment without pushing code:

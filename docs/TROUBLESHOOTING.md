@@ -12,6 +12,102 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
 
 ## Deployment Issues
 
+### GitHub Actions Workflow Fails
+
+**Symptoms:**
+- Workflow shows "Failure" status with red X
+- Error message: "Process completed with exit code 1"
+- Workflow run appears in Actions tab but fails
+
+**How to View Detailed Error Logs:**
+
+1. Go to your repository → Click **"Actions"** tab (at the top)
+2. Find the failed workflow run (it will have a red X)
+3. Click on the workflow run name (e.g., "Deploy to Cloud Run #15")
+4. You'll see a list of jobs - click on the **"deploy"** job (it will have a red X)
+5. Expand each step to see detailed error messages:
+   - Click on **"Authenticate to Google Cloud"** to see if authentication failed
+   - Click on **"Deploy to Cloud Run"** to see the actual deployment error
+   - The error message will tell you exactly what went wrong
+
+**Common Causes and Solutions:**
+
+1. **Missing or Incorrect GitHub Secrets:**
+   - **Error**: "Secret not found" or authentication errors
+   - **Solution**: 
+     - Go to repository → **Settings** → **Secrets and variables** → **Actions**
+     - Verify both `GCP_PROJECT_ID` and `GCP_SA_KEY` exist
+     - Check that `GCP_PROJECT_ID` contains your actual Project ID (not project name)
+     - Check that `GCP_SA_KEY` contains the complete JSON from the service account key file
+
+2. **Service Account Permissions Missing:**
+   - **Error**: "Permission denied" or "does not have permission"
+   - **Solution**:
+     - Go to [Google Cloud Console](https://console.cloud.google.com/)
+     - Navigate to **IAM & Admin** → **Service Accounts**
+     - Click on `github-actions` service account → **Permissions** tab
+     - Click **"Manage access"** → Verify these three roles are assigned:
+       - Cloud Run Admin
+       - Service Account User
+       - Cloud Build Editor
+     - If missing, add them using the **"+ Add role"** button
+
+3. **APIs Not Enabled:**
+   - **Error**: "API not enabled" or "service is not available"
+   - **Solution**:
+     - Go to [Google Cloud Console](https://console.cloud.google.com/)
+     - Navigate to **APIs & Services** → **Library**
+     - Search for and enable these APIs:
+       - Cloud Run API
+       - Cloud Build API
+       - Artifact Registry API (if needed)
+
+4. **Billing Not Enabled:**
+   - **Error**: "Billing account required" or "billing is not enabled"
+   - **Solution**:
+     - Go to [Google Cloud Console](https://console.cloud.google.com/)
+     - Navigate to **Billing**
+     - Link a billing account to your project
+     - Cloud Run requires billing to be enabled
+
+5. **Project ID Mismatch:**
+   - **Error**: "Project not found" or "invalid project"
+   - **Solution**:
+     - Verify your `GCP_PROJECT_ID` secret matches your actual Project ID
+     - Go to [Google Cloud Console](https://console.cloud.google.com/)
+     - Navigate to **IAM & Admin** → **Settings**
+     - Copy the exact **Project ID** (not Project Name)
+     - Update the `GCP_PROJECT_ID` secret in GitHub with the correct value
+
+6. **Service Account Key Invalid:**
+   - **Error**: "Invalid credentials" or "authentication failed"
+   - **Solution**:
+     - The service account key JSON might be corrupted or incomplete
+     - Go to [Google Cloud Console](https://console.cloud.google.com/)
+     - Navigate to **IAM & Admin** → **Service Accounts**
+     - Click on `github-actions` → **Keys** tab
+     - Delete the old key (if you want) and create a new one
+     - Copy the ENTIRE JSON file contents (including all curly braces)
+     - Update the `GCP_SA_KEY` secret in GitHub with the new key
+
+7. **Build Errors:**
+   - **Error**: Docker build fails or package installation errors
+   - **Solution**:
+     - Check the **"Deploy to Cloud Run"** step logs in GitHub Actions
+     - Common issues:
+       - Missing files (Dockerfile, package.json, server.js)
+       - Package installation failures
+       - Dockerfile syntax errors
+     - Verify all required files are committed to the repository
+
+**How to Re-run a Failed Workflow:**
+
+1. Go to repository → **Actions** tab
+2. Click on the failed workflow run
+3. Click the **"Re-run jobs"** button (top right, dropdown button)
+4. Select **"Re-run all jobs"** from the dropdown
+5. The workflow will start again
+
 ### Docker Build Fails
 
 **Symptoms:**

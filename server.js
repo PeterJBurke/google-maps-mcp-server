@@ -23,23 +23,35 @@ try {
   // - A function to create the server
   const codeAssistMCP = await import('@googlemaps/code-assist-mcp');
   
+  console.log('Package imported successfully');
+  console.log('Package exports:', Object.keys(codeAssistMCP));
+  
   // Try different common export patterns
   if (codeAssistMCP.default) {
     mcpServer = codeAssistMCP.default;
+    console.log('Using default export');
   } else if (codeAssistMCP.createServer) {
     mcpServer = codeAssistMCP.createServer();
+    console.log('Using createServer function');
   } else if (codeAssistMCP.Server) {
     mcpServer = new codeAssistMCP.Server();
+    console.log('Using Server class');
   } else {
     mcpServer = codeAssistMCP;
+    console.log('Using entire package as server');
   }
   
   // Get handler function if available
   mcpHandler = mcpServer.handle || mcpServer.process || mcpServer;
   
   console.log('MCP server package loaded successfully');
+  console.log('MCP server type:', typeof mcpServer);
+  console.log('MCP handler type:', typeof mcpHandler);
+  console.log('MCP server methods:', Object.keys(mcpServer || {}));
 } catch (error) {
   console.error('Failed to import @googlemaps/code-assist-mcp:', error);
+  console.error('Error details:', error.message);
+  console.error('Stack:', error.stack);
   console.error('Please ensure the package is installed: npm install @googlemaps/code-assist-mcp');
   process.exit(1);
 }
@@ -77,28 +89,44 @@ async function handleMCPRequest(req, res) {
       body += chunk.toString();
     }
 
+    console.log('Received request body:', body.substring(0, 500));
+
     if (!body) {
+      console.warn('Empty request body received');
       res.writeHead(400, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: 'Empty request body' }));
       return;
     }
 
     // Parse JSON request
-    const request = JSON.parse(body);
+    let request;
+    try {
+      request = JSON.parse(body);
+      console.log('Parsed request:', JSON.stringify(request).substring(0, 500));
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError);
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Invalid JSON', message: parseError.message }));
+      return;
+    }
 
     // Handle MCP protocol request
     // The MCP server should handle the request and return a response
     // This is a simplified handler - actual implementation may vary
     const response = await handleMCPProtocol(request);
+    
+    console.log('Sending response:', JSON.stringify(response).substring(0, 500));
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(response));
   } catch (error) {
     console.error('Error handling MCP request:', error);
+    console.error('Error stack:', error.stack);
     res.writeHead(500, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
+      stack: process.env.NODE_ENV !== 'production' ? error.stack : undefined
     }));
   }
 }
@@ -123,27 +151,40 @@ async function handleMCPProtocol(request) {
   }
 
   try {
+    console.log(`Handling MCP method: ${method}, id: ${id}`);
+    
     // Route to MCP server handler
     // Try different handler patterns based on common MCP server implementations
     let result;
     
     if (typeof mcpHandler === 'function') {
       // If handler is a function, call it with the request
+      console.log('Calling mcpHandler as function');
       result = await mcpHandler(request);
-    } else if (mcpServer.handleRequest) {
+    } else if (mcpServer && mcpServer.handleRequest) {
       // If server has handleRequest method
+      console.log('Calling mcpServer.handleRequest');
       result = await mcpServer.handleRequest(method, params);
-    } else if (mcpServer.process) {
+    } else if (mcpServer && mcpServer.process) {
       // If server has process method
+      console.log('Calling mcpServer.process');
       result = await mcpServer.process(request);
-    } else {
+    } else if (mcpServer && typeof mcpServer === 'object') {
       // Fallback: try to call with method name
-      if (mcpServer[method]) {
+      if (mcpServer[method] && typeof mcpServer[method] === 'function') {
+        console.log(`Calling mcpServer.${method}`);
         result = await mcpServer[method](params);
       } else {
-        throw new Error(`Method ${method} not found`);
+        console.error(`Method ${method} not found on mcpServer`);
+        console.error('Available methods:', Object.keys(mcpServer));
+        throw new Error(`Method ${method} not found. Available: ${Object.keys(mcpServer).join(', ')}`);
       }
+    } else {
+      console.error('mcpServer is not usable:', typeof mcpServer, mcpServer);
+      throw new Error('MCP server not properly initialized');
     }
+
+    console.log('MCP handler result:', JSON.stringify(result).substring(0, 200));
 
     // If result is already a JSON-RPC response, return it
     if (result && result.jsonrpc) {
@@ -158,13 +199,15 @@ async function handleMCPProtocol(request) {
     };
   } catch (error) {
     console.error('MCP handler error:', error);
+    console.error('Error stack:', error.stack);
     return {
       jsonrpc: '2.0',
       id: id || null,
       error: {
         code: -32603,
         message: 'Internal error',
-        data: error.message
+        data: error.message,
+        stack: process.env.NODE_ENV !== 'production' ? error.stack : undefined
       }
     };
   }

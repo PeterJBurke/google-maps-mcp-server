@@ -1,0 +1,29 @@
+{
+  "name": "google-maps-mcp-server",
+  "version": "1.0.0",
+  "description": "Google Maps Platform Code Assist MCP Server for OpenAI Platform",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node test-server.js",
+    "build": "docker build -t google-maps-mcp-server .",
+    "deploy": "./deploy.sh"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@googlemaps/code-assist-mcp": "latest"
+  },
+  "keywords": [
+    "mcp",
+    "google-maps",
+    "openai",
+    "chatgpt"
+  ],
+  "author": "",
+  "license": "Apache-2.0"
+}
+

@@ -53,12 +53,13 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
        - **Cloud Run Admin** (`roles/run.admin`)
        - **Service Account User** (`roles/iam.serviceAccountUser`)
        - **Cloud Build Editor** (`roles/cloudbuild.builds.editor`)
-       - **Artifact Registry Repository Administrator** (`roles/artifactregistry.repoAdmin`) - **CRITICAL!**
+       - **Artifact Registry Administrator** (`roles/artifactregistry.admin`) - **CRITICAL!**
          - **Important:** "Artifact Registry Writer" (`roles/artifactregistry.writer`) is NOT sufficient
          - Writer role can only push/pull images, but cannot CREATE repositories
          - When using `--source`, Cloud Run needs to CREATE the repository if it doesn't exist
+         - Administrator role provides full access including repository creation
      - If any are missing, click **"+ Add role"** and add them
-     - **Remove "Artifact Registry Writer" if you have it** and replace with "Artifact Registry Repository Administrator"
+     - **Remove "Artifact Registry Writer" if you have it** and replace with "Artifact Registry Administrator"
 
 3. **APIs Not Enabled (Most Common Issue):**
    - **Error**: `PERMISSION_DENIED: Cloud Build API has not been used in project *** before or it is disabled`

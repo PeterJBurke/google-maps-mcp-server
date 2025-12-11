@@ -34,6 +34,7 @@ jobs:
 
       - name: Deploy to Cloud Run
         run: |
+          SERVICE_ACCOUNT_EMAIL="github-actions@${{ env.PROJECT_ID }}.iam.gserviceaccount.com"
           gcloud run deploy ${{ env.SERVICE_NAME }} \
             --source . \
             --platform managed \
@@ -46,6 +47,7 @@ jobs:
             --max-instances 10 \
             --timeout 300 \
             --project ${{ env.PROJECT_ID }} \
+            --build-service-account $SERVICE_ACCOUNT_EMAIL \
             --quiet
 
       - name: Get Service URL

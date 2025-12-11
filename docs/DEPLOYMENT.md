@@ -344,6 +344,11 @@ To enable automatic deployment on every push (no local files or tools needed):
 
 #### 2. Grant Necessary Permissions
 
+**Important:** The service account needs these permissions because:
+- It will be used by GitHub Actions to deploy to Cloud Run
+- It will also be used by Cloud Build (via `--build-service-account`) to build your Docker image
+- Cloud Build needs to create Artifact Registry repositories and push images
+
 Now you need to add roles to the service account you just created:
 
 1. On the Service Accounts list page, find the service account named **"github-actions"** in the table
@@ -366,14 +371,15 @@ Now you need to add roles to the service account you just created:
 14. Click **"+ Add role"** again
 15. Type: `Cloud Build Editor` and select **"Cloud Build Editor"** (shows `roles/cloudbuild.builds.editor`)
 16. Click **"+ Add role"** one more time
-17. Type: `Artifact Registry Repository Administrator` and select **"Artifact Registry Repository Administrator"** (shows `roles/artifactregistry.repoAdmin`)
+17. Type: `Artifact Registry Administrator` and select **"Artifact Registry Administrator"** (shows `roles/artifactregistry.admin`)
     - **Important:** This role is required to CREATE repositories (not just write to them)
     - The "Artifact Registry Writer" role is NOT sufficient - it cannot create repositories
+    - This role gives full admin access to Artifact Registry, including creating repositories
 18. You should now see all four roles listed in the dialog:
     - Cloud Run Admin
     - Service Account User
     - Cloud Build Editor
-    - Artifact Registry Repository Administrator
+    - Artifact Registry Administrator
 19. Click the blue **"Save"** button at the bottom of the dialog
 20. The dialog will close and you'll see a success notification
 

@@ -272,67 +272,50 @@ To enable automatic deployment on every push (no local files or tools needed):
 #### 1. Create a Google Cloud Service Account
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Select your project from the project selector at the top
-3. Click the hamburger menu (☰) in the top left
-4. Navigate to **IAM & Admin** → **Service Accounts**
-5. Click **Create Service Account** button (usually at the top)
-6. **Step 1: Service account details:**
-   - **Service account name**: Enter `github-actions`
-   - **Service account ID**: Will auto-fill as `github-actions` (you can change if needed)
-   - **Description** (optional): `Service account for GitHub Actions deployment`
-   - Click **Create and Continue**
+2. Make sure your project is selected (check the project selector at the top - it should show your project name)
+3. In the left navigation sidebar, find **"IAM & Admin"** section
+4. Click on **"Service Accounts"** (it's in the IAM & Admin section)
+5. You'll see the Service Accounts page with a table
+6. At the top of the page, click the blue **"+ Create service account"** button
+7. A form will appear with **"Service account details"**:
+   - In the **"Service account name"** field, type: `github-actions`
+   - The **"Service account ID"** field will auto-fill with `github-actions` (leave it as is)
+   - In the **"Description"** field (optional), type: `Service account for GitHub Actions deployment`
+   - Click the blue **"Create and Continue"** button at the bottom
+
+8. You may see a step about granting access - you can skip this for now:
+   - If you see **"Grant this service account access to project"** - click **"Continue"** or **"Skip"**
+   - If you see **"Grant users access to this service account"** - click **"Done"** or **"Skip"**
+
+9. You should now see a success message saying **"Service account created"** (a black notification in the bottom right)
+10. You'll be back at the Service Accounts list page
 
 #### 2. Grant Necessary Permissions
 
-After clicking "Create and Continue", you'll move to the next step. The interface may show:
-- **Step 2: Grant this service account access to project**, OR
-- **Grant access to project**, OR
-- A section with role/permission options
+Now you need to add roles to the service account you just created:
 
-**If you see a role/permission section:**
+1. On the Service Accounts list page, find the service account named **"github-actions"** in the table
+2. Click on the service account name (the email address: `github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com`)
+3. You'll see the service account details page with several tabs at the top: **Details**, **Permissions**, **Keys**, **Metrics**, **Logs**, **Principals with access**
+4. Click on the **"Permissions"** tab
+5. You'll see a section titled **"Manage service account permissions"** with text explaining you can edit roles
+6. Click the blue **"Manage access"** button
+7. A dialog box will appear on the right side titled **"Edit access to 'YOUR_PROJECT_NAME'"**
+8. In this dialog, you'll see:
+   - **Principal** field showing: `github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com`
+   - **"Assign roles"** section with text about roles
+   - A blue button labeled **"+ Add role"**
 
-1. Look for a button or dropdown that says:
-   - **"Grant access"**, OR
-   - **"Select a role"**, OR
-   - **"Add role"**, OR
-   - **"Grant this service account access to project"**
-
-2. Click it to add roles. You'll need to add three roles:
-
-   **Add the first role:**
-   - Click the role dropdown or "Select a role" button
-   - Type or search for: `Cloud Run Admin`
-   - Select **"Cloud Run Admin"** from the list
-   - Look for **"Add another role"** button and click it (or click the role dropdown again)
-
-   **Add the second role:**
-   - Type or search for: `Service Account User`
-   - Select **"Service Account User"** from the list
-   - Click **"Add another role"** again (or click the role dropdown)
-
-   **Add the third role:**
-   - Type or search for: `Cloud Build Editor`
-   - Select **"Cloud Build Editor"** from the list
-
-3. After adding all three roles, click **Continue** (or **Next**)
-
-4. **Final step** (if shown):
-   - You may see "Grant users access to this service account" - you can skip this
-   - Click **Done** (or **Create** or **Finish**)
-
-**Alternative: If you don't see the role section during creation:**
-
-1. Click **Done** or **Create** to finish creating the service account
-2. You'll be taken back to the Service Accounts list
-3. Click on the `github-actions` service account you just created
-4. Go to the **Permissions** tab (or **IAM** tab)
-5. Click **Grant Access** (or **Add Principal**)
-6. In **Principal**, enter: `github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com`
-7. In **Role**, add each role one by one:
-   - `Cloud Run Admin`
-   - `Service Account User`
-   - `Cloud Build Editor`
-8. Click **Save**
+9. Click the **"+ Add role"** button
+10. A dropdown menu will appear - start typing: `Cloud Run Admin`
+11. Select **"Cloud Run Admin"** from the dropdown (it should show `roles/run.admin` in smaller text)
+12. The role will be added to the list. Click **"+ Add role"** again
+13. Type: `Service Account User` and select **"Service Account User"** (shows `roles/iam.serviceAccountUser`)
+14. Click **"+ Add role"** one more time
+15. Type: `Cloud Build Editor` and select **"Cloud Build Editor"** (shows `roles/cloudbuild.builds.editor`)
+16. You should now see all three roles listed in the dialog
+17. Click the blue **"Save"** button at the bottom of the dialog
+18. The dialog will close and you'll see a success notification
 
 #### 3. Create and Download Key
 

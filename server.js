@@ -3,10 +3,11 @@
 /**
  * Google Maps Platform Code Assist MCP Server
  * HTTP Server for OpenAI Platform Integration
- * 
- * This script uses the @googlemaps/code-assist-mcp package's built-in
- * HTTP server functionality.
+ *
+ * Uses the @googlemaps/code-assist-mcp package's built-in HTTP server.
  */
+
+import { createServer } from 'http';
 
 const PORT = process.env.PORT || 8080;
 
@@ -15,7 +16,7 @@ console.log(`PORT environment variable: ${PORT}`);
 
 async function main() {
   try {
-    // Import the MCP server package
+  // Import the MCP server package
     const codeAssistMCP = await import('@googlemaps/code-assist-mcp');
     
     console.log('Package imported successfully');
@@ -34,39 +35,37 @@ async function main() {
       console.log('MCP server methods:', Object.keys(mcpServer));
     }
     
-    // Check if the package has startHttpServer method
-    if (mcpServer.startHttpServer && typeof mcpServer.startHttpServer === 'function') {
-      console.log('Calling startHttpServer...');
-      
-      // Try calling without arguments first - it might use PORT env var
-      const result = mcpServer.startHttpServer();
-      
-      // If it returns a promise, await it
-      if (result && typeof result.then === 'function') {
-        console.log('startHttpServer returned a promise, awaiting...');
-        await result;
-      }
-      
-      console.log(`Google Maps MCP Server started on port ${PORT}`);
-    } else if (mcpServer.listen && typeof mcpServer.listen === 'function') {
-      console.log('Calling listen...');
-      await mcpServer.listen(parseInt(PORT, 10));
-      console.log(`Google Maps MCP Server listening on port ${PORT}`);
-    } else if (mcpServer.start && typeof mcpServer.start === 'function') {
-      console.log('Calling start...');
-      await mcpServer.start();
-      console.log(`Google Maps MCP Server started on port ${PORT}`);
-    } else {
-      console.error('No suitable start method found');
-      console.error('Available methods:', Object.keys(mcpServer));
-      
-      // Last resort: check if the package already started an HTTP server
-      // and just keep the process running
-      console.log('Keeping process alive to allow auto-started server to run...');
-      
-      // Keep the process alive
-      setInterval(() => {}, 1000 * 60 * 60); // Keep alive for 1 hour intervals
+  // Prefer startHttpServer with an explicit httpServer to avoid undefined listen
+  if (mcpServer.startHttpServer && typeof mcpServer.startHttpServer === 'function') {
+    console.log('Calling startHttpServer with explicit httpServer and port...');
+    const httpServer = createServer();
+
+    const result = mcpServer.startHttpServer({
+      httpServer,
+      port: Number(PORT),
+      // path: '/mcp', // uncomment if the package supports path option
+    });
+
+    if (result && typeof result.then === 'function') {
+      console.log('startHttpServer returned a promise, awaiting...');
+      await result;
     }
+
+    console.log(`Google Maps MCP Server started on port ${PORT}`);
+  } else if (mcpServer.listen && typeof mcpServer.listen === 'function') {
+    console.log('Calling listen...');
+    await mcpServer.listen(Number(PORT));
+    console.log(`Google Maps MCP Server listening on port ${PORT}`);
+  } else if (mcpServer.start && typeof mcpServer.start === 'function') {
+    console.log('Calling start...');
+    await mcpServer.start({ port: Number(PORT) });
+    console.log(`Google Maps MCP Server started on port ${PORT}`);
+  } else {
+    console.error('No suitable start method found');
+    console.error('Available methods:', Object.keys(mcpServer));
+    // Keep process alive if the package auto-starts
+    setInterval(() => {}, 1000 * 60 * 60);
+  }
     
     // Keep process running
     console.log('Server is running. Waiting for requests...');

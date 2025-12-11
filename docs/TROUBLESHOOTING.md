@@ -324,6 +324,67 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
      --region us-central1
    ```
 
+### MCP Server 424 Error (Failed Dependency)
+
+**Symptoms:**
+- OpenAI Platform shows: `Error retrieving tool list from MCP server: 'google_maps_platform_code_assist'. Http status code: 424 (Failed Dependency)`
+- Tool appears in configuration but doesn't work
+- "Empty assistant message" responses
+
+**This error means the server is responding, but there's an issue with the MCP protocol implementation.**
+
+**Solutions:**
+
+1. **Check Cloud Run Logs (Most Important):**
+   - Go to [Cloud Run Console](https://console.cloud.google.com/run)
+   - Click on `google-maps-mcp-server`
+   - Click the **"Logs"** tab
+   - Look for recent entries when OpenAI Platform tries to connect
+   - Look for:
+     - Package import messages
+     - "MCP server package loaded successfully" or error messages
+     - Incoming request logs
+     - Method calls (like "initialize" or "tools/list")
+     - Any error messages or stack traces
+
+2. **Verify Package Installation:**
+   - Check logs for: `Failed to import @googlemaps/code-assist-mcp`
+   - If you see this, the package might not be installed correctly
+   - The package should be in `package.json` dependencies
+
+3. **Test the Endpoint Directly:**
+   ```bash
+   # Test health endpoint
+   curl https://your-service-url/health
+   
+   # Test MCP endpoint with initialize request
+   curl -X POST https://your-service-url/mcp \
+     -H "Content-Type: application/json" \
+     -d '{"jsonrpc":"2.0","method":"initialize","id":1,"params":{}}'
+   ```
+
+4. **Check Package Export:**
+   - The logs should show: `Package exports: [...]`
+   - This tells us what the package actually exports
+   - Look for messages like "Using default export" or "Using createServer function"
+
+5. **Common Issues:**
+   - **Package not found**: Check `package.json` has `@googlemaps/code-assist-mcp` in dependencies
+   - **Wrong export pattern**: The package might export differently than expected
+   - **Missing initialization**: The MCP server might need explicit initialization
+   - **Protocol mismatch**: Request/response format might not match MCP spec
+
+6. **Share Logs for Debugging:**
+   - Copy the relevant log entries (especially errors)
+   - Look for lines starting with "Error", "Failed", or "MCP handler error"
+   - Share these to help diagnose the issue
+
+**Next Steps:**
+After checking logs, you'll likely see one of these:
+- Package import failure → Need to fix package installation
+- Method not found → Need to adjust how we call the MCP server
+- Handler error → Need to fix the request/response handling
+
 ### CORS Errors
 
 **Symptoms:**

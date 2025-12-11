@@ -153,6 +153,38 @@ When working correctly:
 - Code examples should be current and follow best practices
 - ChatGPT can access the latest documentation even if it's newer than the model's training data
 
+## Troubleshooting Connection Issues
+
+### 424 Failed Dependency Error
+
+If you see: `Error retrieving tool list from MCP server. Http status code: 424 (Failed Dependency)`
+
+**This means the server is responding but there's an issue with the MCP protocol.**
+
+**Immediate Steps:**
+
+1. **Check Cloud Run Logs:**
+   - Go to [Cloud Run Console](https://console.cloud.google.com/run)
+   - Click on `google-maps-mcp-server` → **Logs** tab
+   - Look for error messages when OpenAI Platform tries to connect
+   - The logs will show what's actually happening
+
+2. **Verify Your Service is Running:**
+   - Test the health endpoint: `https://your-service-url/health`
+   - Should return: `{"status":"healthy",...}`
+
+3. **Check the Deployment:**
+   - Go to GitHub Actions → Latest workflow run
+   - Make sure deployment succeeded (green checkmark)
+   - Check that the service URL is correct
+
+4. **Common Causes:**
+   - MCP package not installed correctly
+   - Package exports don't match our implementation
+   - Server not handling MCP protocol correctly
+
+**See [Troubleshooting Guide](../docs/TROUBLESHOOTING.md#mcp-server-424-error-failed-dependency) for detailed steps.**
+
 ## Troubleshooting
 
 ### Connection Issues

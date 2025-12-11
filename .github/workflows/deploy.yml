@@ -33,6 +33,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Deploy to Cloud Run
+        id: deploy
         run: |
           BUILD_SERVICE_ACCOUNT="projects/${{ env.PROJECT_ID }}/serviceAccounts/github-actions@${{ env.PROJECT_ID }}.iam.gserviceaccount.com"
           gcloud run deploy ${{ env.SERVICE_NAME }} \
@@ -48,7 +49,27 @@ jobs:
             --timeout 300 \
             --project ${{ env.PROJECT_ID }} \
             --build-service-account $BUILD_SERVICE_ACCOUNT \
-            --quiet
+            --quiet || DEPLOY_EXIT_CODE=$?
+          
+          if [ -n "$DEPLOY_EXIT_CODE" ]; then
+            echo "Deployment failed. Fetching build logs..."
+            # Get the latest build ID
+            BUILD_ID=$(gcloud builds list \
+              --limit 1 \
+              --format 'value(id)' \
+              --project ${{ env.PROJECT_ID }} \
+              --filter "source.storageSource.bucket~'cloud-build-source' AND source.storageSource.object~'source'" \
+              --sort-by=~createTime)
+            
+            if [ -n "$BUILD_ID" ]; then
+              echo "=== Cloud Build Logs ==="
+              gcloud builds log $BUILD_ID --project ${{ env.PROJECT_ID }} || true
+            else
+              echo "Could not find build ID. Listing recent builds:"
+              gcloud builds list --limit 5 --project ${{ env.PROJECT_ID }}
+            fi
+            exit $DEPLOY_EXIT_CODE
+          fi
 
       - name: Get Service URL
         id: service-url

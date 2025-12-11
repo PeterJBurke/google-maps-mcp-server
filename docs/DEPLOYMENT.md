@@ -72,58 +72,70 @@ You can modify these values in the workflow file and push the changes - GitHub A
 
 ## Verification
 
-### 1. Get Service URL
+### 1. Check GitHub Actions Deployment
 
-```bash
-SERVICE_URL=$(gcloud run services describe ${SERVICE_NAME} \
-  --region us-central1 \
-  --format 'value(status.url)')
+1. Go to your repository → **Actions** tab
+2. Find the latest "Deploy to Cloud Run" workflow run
+3. Check that it completed successfully (green checkmark)
+4. Click on the workflow run to see details
+5. The output will show your service URL
 
-echo "Service URL: ${SERVICE_URL}"
-```
+### 2. Get Service URL
 
-### 2. Test Health Endpoint
+**From GitHub Actions:**
+- In the workflow output, look for "MCP Endpoint:" or "Service URL:"
 
-```bash
-curl ${SERVICE_URL}/health
-```
+**From Google Cloud Console:**
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Navigate to **Cloud Run**
+3. Find your service (`google-maps-mcp-server`)
+4. Click on it to see details
+5. Copy the URL shown at the top
 
-Expected response:
-```json
-{
-  "status": "healthy",
-  "service": "google-maps-mcp-server",
-  "timestamp": "2024-01-01T00:00:00.000Z"
-}
-```
+### 3. Test Health Endpoint
 
-### 3. Test MCP Endpoint
+1. Open your browser
+2. Visit: `https://your-service-url.run.app/health`
+3. You should see JSON response:
+   ```json
+   {
+     "status": "healthy",
+     "service": "google-maps-mcp-server",
+     "timestamp": "2024-01-01T00:00:00.000Z"
+   }
+   ```
 
-```bash
-curl -X POST ${SERVICE_URL}/mcp \
-  -H "Content-Type: application/json" \
-  -d '{
-    "jsonrpc": "2.0",
-    "method": "initialize",
-    "id": 1,
-    "params": {}
-  }'
-```
+### 4. Test MCP Endpoint
 
-### 4. Check Logs
+Use an online API testing tool:
 
-```bash
-gcloud run services logs read ${SERVICE_NAME} \
-  --region us-central1 \
-  --limit 50
-```
+1. Go to [Postman](https://www.postman.com/) or [reqbin.com](https://reqbin.com/)
+2. Create a POST request to: `https://your-service-url.run.app/mcp`
+3. Set header: `Content-Type: application/json`
+4. Set body (JSON):
+   ```json
+   {
+     "jsonrpc": "2.0",
+     "method": "initialize",
+     "id": 1,
+     "params": {}
+   }
+   ```
+5. Send the request
 
-### 5. View Service Details
+### 5. Check Logs
 
-```bash
-gcloud run services describe ${SERVICE_NAME} \
-  --region us-central1
-```
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Navigate to **Cloud Run** → Your service
+3. Click on the **Logs** tab
+4. View recent logs and errors
+
+### 6. View Service Details
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Navigate to **Cloud Run**
+3. Click on your service name
+4. View all details: status, metrics, revisions, logs
 
 ## Updating the Deployment
 
@@ -170,15 +182,10 @@ Cloud Run automatically scales based on traffic:
 
 ### Monitoring
 
-```bash
-# View metrics in Cloud Console
-gcloud run services describe ${SERVICE_NAME} \
-  --region us-central1 \
-  --format="value(status.url)"
-
-# Or use Cloud Monitoring
-# Visit: https://console.cloud.google.com/run
-```
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Navigate to **Cloud Run** → Your service
+3. View metrics, logs, and performance data
+4. Or go to **Monitoring** → **Cloud Run** for detailed analytics
 
 ## Alternative Deployment Options
 

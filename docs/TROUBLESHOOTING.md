@@ -377,7 +377,18 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
 6. **Share Logs for Debugging:**
    - Copy the relevant log entries (especially errors)
    - Look for lines starting with "Error", "Failed", or "MCP handler error"
+   - **Most Important:** Look for these specific log lines:
+     - `Package exports: [...]` - Shows what the package exports
+     - `MCP server methods: [...]` - Shows available methods on the server
+     - `Handling MCP method: ...` - Shows what method OpenAI is calling
+     - Any error messages after method calls
    - Share these to help diagnose the issue
+
+7. **Check for Stdio vs HTTP:**
+   - If you see: `Google Maps Platform Code Assist Server running on stdio`
+   - This means the package is stdio-based, not HTTP
+   - We may need to adapt it for HTTP transport
+   - The logs will show if this is the issue
 
 **Next Steps:**
 After checking logs, you'll likely see one of these:

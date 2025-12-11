@@ -54,7 +54,7 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
      - Go to [Google Cloud Console](https://console.cloud.google.com/)
      - Navigate to **IAM & Admin** → **Service Accounts**
      - Click on `github-actions` service account → **Permissions** tab
-     - Click **"Manage access"** → Verify these **five** roles are assigned:
+     - Click **"Manage access"** → Verify these **six** roles are assigned:
        - **Cloud Run Admin** (`roles/run.admin`)
        - **Service Account User** (`roles/iam.serviceAccountUser`)
        - **Cloud Build Editor** (`roles/cloudbuild.builds.editor`)
@@ -66,6 +66,10 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
        - **Storage Admin** (`roles/storage.admin`) - **REQUIRED for source uploads!**
          - **Error if missing**: `storage.buckets.create access denied`
          - Cloud Build needs to create temporary buckets to stage source code
+       - **Service Usage Consumer** (`roles/serviceusage.serviceUsageConsumer`) - **REQUIRED for build service account!**
+         - **Error if missing**: `missing required IAM permissions` and `serviceusage.services.use permission`
+         - Required when using `--build-service-account` flag
+         - Allows the build service account to consume Google Cloud services
      - If any are missing, click **"+ Add role"** and add them
      - **Remove "Artifact Registry Writer" if you have it** and replace with "Artifact Registry Administrator"
 

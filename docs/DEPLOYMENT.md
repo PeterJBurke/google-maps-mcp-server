@@ -131,26 +131,26 @@ gcloud run services describe ${SERVICE_NAME} \
 
 Simply push to the repository - GitHub Actions automatically redeploys:
 
-```bash
-git add .
-git commit -m "Update code"
-git push
-```
+1. Make your code changes
+2. Commit and push to your repository (via GitHub web interface or Git)
+3. GitHub Actions automatically:
+   - Builds a new Docker image
+   - Deploys the updated service to Cloud Run
 
-The GitHub Actions workflow automatically:
-1. Builds a new Docker image
-2. Deploys the updated service to Cloud Run
-
-No manual steps needed!
+No manual steps needed! Check the **Actions** tab to see the deployment progress.
 
 ### Update Configuration
 
-```bash
-gcloud run services update ${SERVICE_NAME} \
-  --memory 1Gi \
-  --cpu 2 \
-  --region us-central1
-```
+To update Cloud Run settings (memory, CPU, etc.):
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Navigate to **Cloud Run**
+3. Click on your service name
+4. Click **Edit & Deploy New Revision**
+5. Adjust settings (memory, CPU, timeout, etc.)
+6. Click **Deploy**
+
+Or edit the `.github/workflows/deploy.yml` file in your repository and push - GitHub Actions will redeploy with new settings.
 
 ## Scaling and Performance
 
@@ -232,29 +232,27 @@ gcloud run services describe ${SERVICE_NAME} \
 
 ### Delete Service
 
-```bash
-gcloud run services delete ${SERVICE_NAME} \
-  --region us-central1
-```
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Navigate to **Cloud Run**
+3. Find your service and click on it
+4. Click **Delete** button
+5. Confirm deletion
 
-### Delete Image
+### Delete Container Images
 
-```bash
-gcloud container images delete ${IMAGE_NAME}
-```
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Navigate to **Artifact Registry** or **Container Registry**
+3. Find the images related to your service
+4. Select and delete them
 
 ### Remove All Resources
 
-```bash
-# Delete service
-gcloud run services delete ${SERVICE_NAME} --region us-central1
-
-# Delete image
-gcloud container images delete ${IMAGE_NAME}
-
-# Optionally delete project (careful!)
-# gcloud projects delete ${PROJECT_ID}
-```
+1. Delete the Cloud Run service (see above)
+2. Delete container images (see above)
+3. Optionally delete the entire project:
+   - Go to **IAM & Admin** → **Settings**
+   - Click **Delete Project**
+   - **Warning:** This deletes everything in the project!
 
 ## GitHub Actions Setup
 
@@ -262,7 +260,7 @@ To enable automatic deployment on every push (no local files or tools needed):
 
 **All steps can be done via the Google Cloud Console web interface - no command line tools required!**
 
-### Option A: Using Google Cloud Console (No Local Tools - Recommended)
+### Using Google Cloud Console (No Local Tools Required)
 
 #### 1. Create a Google Cloud Service Account
 
@@ -296,46 +294,7 @@ To enable automatic deployment on every push (no local files or tools needed):
 7. The key file will download automatically - save it securely
 8. Copy the entire contents of the downloaded JSON file (you'll need it for GitHub Secrets)
 
-### Option B: Using gcloud CLI (Optional - Only if you prefer command line)
-
-If you have gcloud CLI installed and prefer using it:
-
-#### 1. Create a Google Cloud Service Account
-
-```bash
-gcloud iam service-accounts create github-actions \
-  --display-name="GitHub Actions Service Account" \
-  --project=YOUR_PROJECT_ID
-```
-
-#### 2. Grant Necessary Permissions
-
-```bash
-# Allow deploying to Cloud Run
-gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
-  --member="serviceAccount:github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
-  --role="roles/run.admin"
-
-# Allow using service accounts
-gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
-  --member="serviceAccount:github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
-  --role="roles/iam.serviceAccountUser"
-
-# Allow building images
-gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
-  --member="serviceAccount:github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
-  --role="roles/cloudbuild.builds.editor"
-```
-
-#### 3. Create and Download Key
-
-```bash
-gcloud iam service-accounts keys create key.json \
-  --iam-account=github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com \
-  --project=YOUR_PROJECT_ID
-```
-
-### 4. Add to GitHub Secrets (Both Options)
+### 4. Add to GitHub Secrets
 
 **Important Security Information:**
 - GitHub Secrets are encrypted and stored separately by GitHub

@@ -122,26 +122,24 @@ Default configuration:
 - **Timeout**: 300 seconds
 - **Port**: 8080
 
-To customize, edit the deployment script or use `gcloud run services update`.
+To customize, edit the `.github/workflows/deploy.yml` file in your repository, or update settings via [Google Cloud Console](https://console.cloud.google.com/run).
 
 ## Testing
 
 After deployment, test the Cloud Run endpoint:
 
-```bash
-# Get your service URL
-SERVICE_URL=$(gcloud run services describe google-maps-mcp-server \
-  --region us-central1 \
-  --format 'value(status.url)')
+1. **Get your service URL:**
+   - Check the GitHub Actions workflow output (it shows the URL)
+   - Or go to [Google Cloud Console](https://console.cloud.google.com/) → **Cloud Run** → Your service → Copy URL
 
-# Health check
-curl $SERVICE_URL/health
+2. **Test the health endpoint:**
+   - Visit `https://your-service-url.run.app/health` in your browser
+   - Should return JSON with status "healthy"
 
-# MCP endpoint
-curl -X POST $SERVICE_URL/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","method":"initialize","id":1}'
-```
+3. **Test the MCP endpoint:**
+   - Use an online tool like [Postman](https://www.postman.com/) or [reqbin.com](https://reqbin.com/)
+   - POST to `https://your-service-url.run.app/mcp`
+   - Body: `{"jsonrpc":"2.0","method":"initialize","id":1}`
 
 ## Available MCP Tools
 
@@ -175,13 +173,13 @@ For typical usage, costs are minimal. See [Cloud Run Pricing](https://cloud.goog
 
 To require authentication:
 
-```bash
-gcloud run services update google-maps-mcp-server \
-  --no-allow-unauthenticated \
-  --region us-central1
-```
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Navigate to **Cloud Run** → Your service
+3. Click **Edit & Deploy New Revision**
+4. Under **Security**, uncheck "Allow unauthenticated invocations"
+5. Click **Deploy**
 
-Then configure OpenAI Platform with an access token.
+Then configure OpenAI Platform with an access token (see [OpenAI Setup Guide](docs/OPENAI_SETUP.md)).
 
 ## Troubleshooting
 

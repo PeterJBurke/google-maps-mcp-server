@@ -350,6 +350,7 @@ To enable automatic deployment on every push (no local files or tools needed):
 - Cloud Build needs to create Artifact Registry repositories and push images
 - Cloud Build needs to create temporary Cloud Storage buckets to stage source code
 - The build service account needs permission to consume Google Cloud services (Service Usage Consumer)
+- Cloud Build needs permission to write logs for debugging build failures (Logs Writer)
 
 Now you need to add roles to the service account you just created:
 
@@ -387,15 +388,21 @@ Now you need to add roles to the service account you just created:
     - **Important:** This role is required for the build service account to use Google Cloud services
     - When using `--build-service-account`, the service account needs permission to consume services
     - Without this, you'll get: `missing required IAM permissions` and `serviceusage.services.use permission`
-22. You should now see all **six** roles listed in the dialog:
+22. Click **"+ Add role"** one more time
+23. Type: `Logs Writer` and select **"Logs Writer"** (shows `roles/logging.logWriter`)
+    - **Important:** This role is required for Cloud Build to write build logs
+    - Without this, build logs won't be accessible and you'll see: `does not have permission to write logs to Cloud Logging`
+    - This is critical for debugging build failures
+24. You should now see all **seven** roles listed in the dialog:
     - Cloud Run Admin
     - Service Account User
     - Cloud Build Editor
     - Artifact Registry Administrator
     - Storage Admin
     - Service Usage Consumer
-23. Click the blue **"Save"** button at the bottom of the dialog
-24. The dialog will close and you'll see a success notification
+    - Logs Writer
+25. Click the blue **"Save"** button at the bottom of the dialog
+26. The dialog will close and you'll see a success notification
 
 #### 3. Create and Download Key
 

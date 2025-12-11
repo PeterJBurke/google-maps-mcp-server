@@ -80,7 +80,28 @@ Set up once, then every push to the repository automatically deploys:
 
 **Note:** The deployment builds the Docker image in Google Cloud Build automatically. No local tools needed!
 
-### 3. Configure OpenAI Platform
+### 3. Get Your MCP Server URL
+
+After successful deployment, you need to get your service URL:
+
+**From GitHub Actions:**
+1. Go to repository → **Actions** tab
+2. Click on the successful workflow run
+3. Look for **"Get Service URL"** step output
+4. Copy the URL shown (it will end with `/mcp`)
+
+**From Google Cloud Console:**
+1. Go to [Cloud Run Console](https://console.cloud.google.com/run)
+2. Click on `google-maps-mcp-server`
+3. Copy the URL at the top
+4. Add `/mcp` to the end
+
+**URL Format:**
+- Base URL: `https://google-maps-mcp-server-xxxxx-uc.a.run.app`
+- MCP Endpoint: Add `/mcp` → `https://google-maps-mcp-server-xxxxx-uc.a.run.app/mcp`
+- The `xxxxx` is a unique identifier Google assigns to your service
+
+### 4. Configure OpenAI Platform
 
 1. Open [OpenAI Platform](https://platform.openai.com/chat/edit?models=gpt-4.1)
 2. Click "Add MCP Server" or use the "Connect to MCP Server" modal
@@ -92,7 +113,7 @@ Set up once, then every push to the repository automatically deploys:
 
 4. Click "Connect"
 
-### 4. Test the Integration
+### 5. Test the Integration
 
 Ask ChatGPT questions like:
 - "How do I use the Places API?"

@@ -12,10 +12,45 @@ This guide walks you through connecting your deployed Google Maps MCP Server to 
 
 ### 1. Get Your MCP Server URL
 
-After deployment, get your service URL:
+After deployment, you need to get your Cloud Run service URL and add `/mcp` to the end.
 
+**Understanding the URL Format:**
+
+Your MCP server URL has two parts:
+1. **Base URL** (from Cloud Run): `https://google-maps-mcp-server-xxxxx-uc.a.run.app`
+   - This is your Cloud Run service URL
+   - The `xxxxx` part is a unique identifier Google assigns
+   - The `uc` means `us-central1` region
+   - `.a.run.app` is Google's Cloud Run domain
+
+2. **MCP Endpoint Path**: `/mcp`
+   - This is the specific endpoint your server listens on
+   - Always add this to the end of your Cloud Run URL
+
+**Final MCP URL Format:**
+```
+https://google-maps-mcp-server-xxxxx-uc.a.run.app/mcp
+```
+
+**How to Get Your Actual URL:**
+
+**Method 1: From GitHub Actions (Easiest)**
+1. Go to your repository → **Actions** tab
+2. Click on the most recent successful workflow run (green checkmark)
+3. Scroll down to the **"Get Service URL"** step
+4. Look for the output: `MCP Endpoint: https://google-maps-mcp-server-xxxxx-uc.a.run.app/mcp`
+5. Copy that entire URL
+
+**Method 2: From Google Cloud Console**
+1. Go to [Cloud Run Console](https://console.cloud.google.com/run)
+2. Make sure your project is selected (top dropdown)
+3. Click on the service named **`google-maps-mcp-server`**
+4. At the top of the service details page, you'll see a **URL** field
+5. Copy that URL (it will look like: `https://google-maps-mcp-server-xxxxx-uc.a.run.app`)
+6. Add `/mcp` to the end: `https://google-maps-mcp-server-xxxxx-uc.a.run.app/mcp`
+
+**Method 3: Using gcloud CLI (if you have it installed)**
 ```bash
-# Using gcloud
 SERVICE_URL=$(gcloud run services describe google-maps-mcp-server \
   --region us-central1 \
   --format 'value(status.url)')
@@ -23,9 +58,18 @@ SERVICE_URL=$(gcloud run services describe google-maps-mcp-server \
 echo "MCP Endpoint: ${SERVICE_URL}/mcp"
 ```
 
-Or find it in the [Cloud Run Console](https://console.cloud.google.com/run).
+**Example:**
+If your Cloud Run service URL is:
+```
+https://google-maps-mcp-server-a1b2c3d4-uc.a.run.app
+```
 
-Your MCP endpoint will be: `https://your-service-name-xxxxx-uc.a.run.app/mcp`
+Then your MCP endpoint URL is:
+```
+https://google-maps-mcp-server-a1b2c3d4-uc.a.run.app/mcp
+```
+
+**Important:** Always include `/mcp` at the end - this is the endpoint path your server uses!
 
 ### 2. Access OpenAI Platform
 
@@ -41,10 +85,11 @@ In the "Connect to MCP Server" modal:
 #### Required Fields
 
 - **URL**: 
-  ```
-  https://your-service-name-xxxxx-uc.a.run.app/mcp
-  ```
-  (Replace with your actual service URL + `/mcp`)
+  - This is your MCP server endpoint URL
+  - Format: `https://google-maps-mcp-server-xxxxx-uc.a.run.app/mcp`
+  - **Important:** Use the actual URL from your deployment (see Step 1 above)
+  - **Important:** Must end with `/mcp` - this is the endpoint path
+  - Example: `https://google-maps-mcp-server-a1b2c3d4-uc.a.run.app/mcp`
 
 - **Label**: 
   ```

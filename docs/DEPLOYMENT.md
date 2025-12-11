@@ -349,6 +349,7 @@ To enable automatic deployment on every push (no local files or tools needed):
 - It will also be used by Cloud Build (via `--build-service-account`) to build your Docker image
 - Cloud Build needs to create Artifact Registry repositories and push images
 - Cloud Build needs to create temporary Cloud Storage buckets to stage source code
+- The build service account needs permission to consume Google Cloud services (Service Usage Consumer)
 
 Now you need to add roles to the service account you just created:
 
@@ -381,14 +382,20 @@ Now you need to add roles to the service account you just created:
     - **Important:** This role is required for Cloud Build to create temporary buckets
     - When using `--source`, Cloud Build needs to create a Cloud Storage bucket to stage source code
     - Without this, you'll get: `storage.buckets.create access denied`
-20. You should now see all **five** roles listed in the dialog:
+20. Click **"+ Add role"** one more time
+21. Type: `Service Usage Consumer` and select **"Service Usage Consumer"** (shows `roles/serviceusage.serviceUsageConsumer`)
+    - **Important:** This role is required for the build service account to use Google Cloud services
+    - When using `--build-service-account`, the service account needs permission to consume services
+    - Without this, you'll get: `missing required IAM permissions` and `serviceusage.services.use permission`
+22. You should now see all **six** roles listed in the dialog:
     - Cloud Run Admin
     - Service Account User
     - Cloud Build Editor
     - Artifact Registry Administrator
     - Storage Admin
-21. Click the blue **"Save"** button at the bottom of the dialog
-22. The dialog will close and you'll see a success notification
+    - Service Usage Consumer
+23. Click the blue **"Save"** button at the bottom of the dialog
+24. The dialog will close and you'll see a success notification
 
 #### 3. Create and Download Key
 

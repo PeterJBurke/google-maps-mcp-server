@@ -202,37 +202,19 @@ Common issues:
 
 To enable automatic deployment on every push:
 
-1. **Create a Google Cloud Service Account:**
-   ```bash
-   gcloud iam service-accounts create github-actions \
-     --display-name="GitHub Actions Service Account"
-   ```
+**All setup can be done via web interfaces - no local tools required!**
 
-2. **Grant necessary permissions:**
-   ```bash
-   gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
-     --member="serviceAccount:github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
-     --role="roles/run.admin"
-   
-   gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
-     --member="serviceAccount:github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
-     --role="roles/iam.serviceAccountUser"
-   ```
+See the detailed step-by-step instructions in [GitHub Actions Setup](docs/DEPLOYMENT.md#github-actions-setup) which includes:
+- Creating service account via Google Cloud Console (web UI)
+- Granting permissions via web interface
+- Creating and downloading keys via web interface
+- Adding secrets to GitHub
 
-3. **Create and download key:**
-   ```bash
-   gcloud iam service-accounts keys create key.json \
-     --iam-account=github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com
-   ```
-
-4. **Add to GitHub Secrets:**
-   - Repository → Settings → Secrets and variables → Actions
-   - Add `GCP_PROJECT_ID`: Your project ID
-   - Add `GCP_SA_KEY`: Contents of `key.json` file
-
-5. **Deploy automatically:**
-   - Push to `main` or `master` branch
-   - Or manually trigger from Actions tab
+**Quick Summary:**
+1. Get your Project ID from [Google Cloud Console](https://console.cloud.google.com/)
+2. Create service account and download key (all via web UI)
+3. Add secrets to GitHub repository
+4. Push to repository → automatically deploys!
 
 ## License
 

@@ -375,13 +375,19 @@ Now you need to add roles to the service account you just created:
     - **Important:** This role is required to CREATE repositories (not just write to them)
     - The "Artifact Registry Writer" role is NOT sufficient - it cannot create repositories
     - This role gives full admin access to Artifact Registry, including creating repositories
-18. You should now see all four roles listed in the dialog:
+18. Click **"+ Add role"** one more time
+19. Type: `Storage Admin` and select **"Storage Admin"** (shows `roles/storage.admin`)
+    - **Important:** This role is required for Cloud Build to create temporary buckets
+    - When using `--source`, Cloud Build needs to create a Cloud Storage bucket to stage source code
+    - Without this, you'll get: `storage.buckets.create access denied`
+20. You should now see all **five** roles listed in the dialog:
     - Cloud Run Admin
     - Service Account User
     - Cloud Build Editor
     - Artifact Registry Administrator
-19. Click the blue **"Save"** button at the bottom of the dialog
-20. The dialog will close and you'll see a success notification
+    - Storage Admin
+21. Click the blue **"Save"** button at the bottom of the dialog
+22. The dialog will close and you'll see a success notification
 
 #### 3. Create and Download Key
 

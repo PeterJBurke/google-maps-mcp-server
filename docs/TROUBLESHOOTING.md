@@ -41,6 +41,8 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
      - Check that `GCP_SA_KEY` contains the complete JSON from the service account key file
 
 2. **Service Account Permissions Missing:**
+   - **Error**: `PERMISSION_DENIED: Permission 'storage.buckets.create' denied`
+   - **Error**: `storage.buckets.create access to the Google Cloud project`
    - **Error**: `PERMISSION_DENIED: Permission 'artifactregistry.repositories.create' denied`
    - **Error**: `PERMISSION_DENIED: Permission 'artifactregistry.repositories.get' denied`
    - **Error**: "Permission denied while accessing Artifact Registry"

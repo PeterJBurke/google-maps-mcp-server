@@ -348,6 +348,7 @@ To enable automatic deployment on every push (no local files or tools needed):
 - It will be used by GitHub Actions to deploy to Cloud Run
 - It will also be used by Cloud Build (via `--build-service-account`) to build your Docker image
 - Cloud Build needs to create Artifact Registry repositories and push images
+- Cloud Build needs to create temporary Cloud Storage buckets to stage source code
 
 Now you need to add roles to the service account you just created:
 

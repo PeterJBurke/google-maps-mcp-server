@@ -51,7 +51,7 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
      - Go to [Google Cloud Console](https://console.cloud.google.com/)
      - Navigate to **IAM & Admin** → **Service Accounts**
      - Click on `github-actions` service account → **Permissions** tab
-     - Click **"Manage access"** → Verify these **four** roles are assigned:
+     - Click **"Manage access"** → Verify these **five** roles are assigned:
        - **Cloud Run Admin** (`roles/run.admin`)
        - **Service Account User** (`roles/iam.serviceAccountUser`)
        - **Cloud Build Editor** (`roles/cloudbuild.builds.editor`)
@@ -60,6 +60,9 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
          - Writer role can only push/pull images, but cannot CREATE repositories
          - When using `--source`, Cloud Run needs to CREATE the repository if it doesn't exist
          - Administrator role provides full access including repository creation
+       - **Storage Admin** (`roles/storage.admin`) - **REQUIRED for source uploads!**
+         - **Error if missing**: `storage.buckets.create access denied`
+         - Cloud Build needs to create temporary buckets to stage source code
      - If any are missing, click **"+ Add role"** and add them
      - **Remove "Artifact Registry Writer" if you have it** and replace with "Artifact Registry Administrator"
 

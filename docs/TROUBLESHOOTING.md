@@ -41,6 +41,8 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
      - Check that `GCP_SA_KEY` contains the complete JSON from the service account key file
 
 2. **Service Account Permissions Missing:**
+   - **Error**: `does not have permission to write logs to Cloud Logging`
+   - **Error**: `Grant the Logs Writer (roles/logging.logWriter) role to the service account`
    - **Error**: `PERMISSION_DENIED: Build failed because the service account is missing required IAM permissions`
    - **Error**: `Caller does not have required permission to use project`
    - **Error**: `Grant the caller the roles/serviceusage.serviceUsageConsumer role`
@@ -54,7 +56,7 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
      - Go to [Google Cloud Console](https://console.cloud.google.com/)
      - Navigate to **IAM & Admin** → **Service Accounts**
      - Click on `github-actions` service account → **Permissions** tab
-     - Click **"Manage access"** → Verify these **six** roles are assigned:
+     - Click **"Manage access"** → Verify these **seven** roles are assigned:
        - **Cloud Run Admin** (`roles/run.admin`)
        - **Service Account User** (`roles/iam.serviceAccountUser`)
        - **Cloud Build Editor** (`roles/cloudbuild.builds.editor`)
@@ -70,6 +72,10 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
          - **Error if missing**: `missing required IAM permissions` and `serviceusage.services.use permission`
          - Required when using `--build-service-account` flag
          - Allows the build service account to consume Google Cloud services
+       - **Logs Writer** (`roles/logging.logWriter`) - **REQUIRED for build logs!**
+         - **Error if missing**: `does not have permission to write logs to Cloud Logging`
+         - Required for Cloud Build to write build logs
+         - Critical for debugging build failures
      - If any are missing, click **"+ Add role"** and add them
      - **Remove "Artifact Registry Writer" if you have it** and replace with "Artifact Registry Administrator"
 

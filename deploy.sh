@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Google Maps MCP Server Deployment Script
-# Deploys to Google Cloud Run using Docker build and push
+# Deploys to Google Cloud Run using Cloud Build (no local Docker required)
 
 set -e
 
@@ -15,7 +15,6 @@ NC='\033[0m' # No Color
 SERVICE_NAME="google-maps-mcp-server"
 REGION="${REGION:-us-central1}"
 PROJECT_ID=""
-IMAGE_NAME=""
 
 # Functions
 print_error() {
@@ -37,12 +36,6 @@ check_prerequisites() {
     # Check for gcloud
     if ! command -v gcloud &> /dev/null; then
         print_error "gcloud CLI is not installed. Please install it from https://cloud.google.com/sdk/docs/install"
-        exit 1
-    fi
-    
-    # Check for Docker
-    if ! command -v docker &> /dev/null; then
-        print_error "Docker is not installed. Please install it from https://docs.docker.com/get-docker/"
         exit 1
     fi
     
@@ -76,51 +69,18 @@ enable_apis() {
     gcloud services enable \
         cloudbuild.googleapis.com \
         run.googleapis.com \
-        artifactregistry.googleapis.com \
         --project="$PROJECT_ID" 2>/dev/null || true
     
     print_success "APIs enabled"
 }
 
-# Build Docker image
-build_image() {
-    print_info "Building Docker image..."
-    
-    IMAGE_NAME="gcr.io/${PROJECT_ID}/${SERVICE_NAME}"
-    
-    docker build -t "$IMAGE_NAME" .
-    
-    if [ $? -ne 0 ]; then
-        print_error "Docker build failed"
-        exit 1
-    fi
-    
-    print_success "Docker image built: $IMAGE_NAME"
-}
-
-# Push Docker image
-push_image() {
-    print_info "Pushing Docker image to Google Container Registry..."
-    
-    # Configure Docker to use gcloud as a credential helper
-    gcloud auth configure-docker --quiet
-    
-    docker push "$IMAGE_NAME"
-    
-    if [ $? -ne 0 ]; then
-        print_error "Docker push failed"
-        exit 1
-    fi
-    
-    print_success "Docker image pushed"
-}
-
-# Deploy to Cloud Run
+# Deploy to Cloud Run using source-based deployment
 deploy_to_cloud_run() {
-    print_info "Deploying to Cloud Run..."
+    print_info "Deploying to Cloud Run (building in the cloud)..."
+    print_info "This will build the Docker image in Google Cloud Build - no local Docker required!"
     
     gcloud run deploy "$SERVICE_NAME" \
-        --image "$IMAGE_NAME" \
+        --source . \
         --platform managed \
         --region "$REGION" \
         --allow-unauthenticated \
@@ -176,8 +136,6 @@ main() {
     check_prerequisites
     get_project_id
     enable_apis
-    build_image
-    push_image
     deploy_to_cloud_run
     get_service_url
 }

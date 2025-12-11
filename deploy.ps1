@@ -1,5 +1,5 @@
 # Google Maps MCP Server Deployment Script (PowerShell)
-# Deploys to Google Cloud Run using Docker build and push
+# Deploys to Google Cloud Run using Cloud Build (no local Docker required)
 
 $ErrorActionPreference = "Stop"
 
@@ -28,12 +28,6 @@ function Check-Prerequisites {
     # Check for gcloud
     if (-not (Get-Command gcloud -ErrorAction SilentlyContinue)) {
         Write-Error-Custom "gcloud CLI is not installed. Please install it from https://cloud.google.com/sdk/docs/install"
-        exit 1
-    }
-    
-    # Check for Docker
-    if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-        Write-Error-Custom "Docker is not installed. Please install it from https://docs.docker.com/get-docker/"
         exit 1
     }
     
@@ -67,56 +61,18 @@ function Enable-Apis {
     gcloud services enable `
         cloudbuild.googleapis.com `
         run.googleapis.com `
-        artifactregistry.googleapis.com `
         --project=$PROJECT_ID 2>$null
     
     Write-Success "APIs enabled"
 }
 
-# Build Docker image
-function Build-Image {
-    Write-Info "Building Docker image..."
-    
-    $IMAGE_NAME = "gcr.io/$PROJECT_ID/$SERVICE_NAME"
-    
-    docker build -t $IMAGE_NAME .
-    
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error-Custom "Docker build failed"
-        exit 1
-    }
-    
-    Write-Success "Docker image built: $IMAGE_NAME"
-    return $IMAGE_NAME
-}
-
-# Push Docker image
-function Push-Image {
-    param($ImageName)
-    
-    Write-Info "Pushing Docker image to Google Container Registry..."
-    
-    # Configure Docker to use gcloud as a credential helper
-    gcloud auth configure-docker --quiet
-    
-    docker push $ImageName
-    
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error-Custom "Docker push failed"
-        exit 1
-    }
-    
-    Write-Success "Docker image pushed"
-}
-
-# Deploy to Cloud Run
+# Deploy to Cloud Run using source-based deployment
 function Deploy-ToCloudRun {
-    param($ImageName)
-    
-    Write-Info "Deploying to Cloud Run..."
+    Write-Info "Deploying to Cloud Run (building in the cloud)..."
+    Write-Info "This will build the Docker image in Google Cloud Build - no local Docker required!"
     
     gcloud run deploy $SERVICE_NAME `
-        --image $ImageName `
+        --source . `
         --platform managed `
         --region $REGION `
         --allow-unauthenticated `
@@ -172,9 +128,7 @@ function Main {
     Check-Prerequisites
     Get-ProjectId
     Enable-Apis
-    $imageName = Build-Image
-    Push-Image -ImageName $imageName
-    Deploy-ToCloudRun -ImageName $imageName
+    Deploy-ToCloudRun
     Get-ServiceUrl
 }
 

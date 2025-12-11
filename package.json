@@ -5,7 +5,6 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "build": "docker build -t google-maps-mcp-server .",
     "deploy": "./deploy.sh"
   },
   "engines": {

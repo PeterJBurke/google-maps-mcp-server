@@ -24,9 +24,8 @@ Google Maps Platform Documentation & Code Samples
 
 ### Required Tools
 
-- **Docker** (for building container images)
-- **Google Cloud SDK** (`gcloud` CLI)
-- **Git** (for cloning repository)
+- **Google Cloud SDK** (`gcloud` CLI) - [Installation Guide](https://cloud.google.com/sdk/docs/install)
+- **Git** (for cloning repository - optional, can also deploy directly from GitHub)
 
 ### Google Cloud Setup
 
@@ -38,14 +37,24 @@ Google Maps Platform Documentation & Code Samples
 
 ## Quick Start
 
-### 1. Clone Repository
+### 1. Deploy to Cloud Run
 
+You can deploy directly from the repository without cloning locally, or clone first:
+
+**Option A: Deploy from GitHub (No local files needed):**
+```bash
+gcloud run deploy google-maps-mcp-server \
+  --source https://github.com/PeterJBurke/google-maps-mcp-server.git \
+  --platform managed \
+  --region us-central1 \
+  --allow-unauthenticated
+```
+
+**Option B: Clone and Deploy:**
 ```bash
 git clone https://github.com/PeterJBurke/google-maps-mcp-server.git
 cd google-maps-mcp-server
 ```
-
-### 2. Deploy to Cloud Run
 
 **Linux/Mac:**
 ```bash
@@ -57,21 +66,17 @@ cd google-maps-mcp-server
 .\deploy.ps1
 ```
 
-**Manual Deployment:**
+**Manual Deployment (Cloud Build - No Docker Required):**
 ```bash
 # Set your project
 gcloud config set project YOUR_PROJECT_ID
 
-# Build Docker image
-docker build -t gcr.io/YOUR_PROJECT_ID/google-maps-mcp-server .
+# Enable required APIs
+gcloud services enable cloudbuild.googleapis.com run.googleapis.com
 
-# Push to Google Container Registry
-gcloud auth configure-docker
-docker push gcr.io/YOUR_PROJECT_ID/google-maps-mcp-server
-
-# Deploy to Cloud Run
+# Deploy directly from source (builds in the cloud)
 gcloud run deploy google-maps-mcp-server \
-  --image gcr.io/YOUR_PROJECT_ID/google-maps-mcp-server \
+  --source . \
   --platform managed \
   --region us-central1 \
   --allow-unauthenticated \
@@ -79,6 +84,8 @@ gcloud run deploy google-maps-mcp-server \
   --memory 512Mi \
   --cpu 1
 ```
+
+**Note:** The `--source .` flag tells Cloud Run to build the Docker image in Google Cloud Build. No local Docker installation needed!
 
 ### 3. Configure OpenAI Platform
 

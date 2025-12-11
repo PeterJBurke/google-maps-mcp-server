@@ -20,7 +20,9 @@ This guide provides step-by-step instructions for deploying the Google Maps MCP 
 - Enable billing (required for Cloud Run)
 - Create a new project or select an existing one
 
-### 2. Install Google Cloud SDK
+### 2. Install Google Cloud SDK (Only Tool Needed!)
+
+**No Docker required!** Cloud Run builds everything in the cloud using Cloud Build.
 
 **Linux:**
 ```bash
@@ -71,9 +73,9 @@ git clone https://github.com/PeterJBurke/google-maps-mcp-server.git
 cd google-maps-mcp-server
 ```
 
-## Building the Docker Image
+## Deploying to Cloud Run
 
-### Option 1: Using the Deployment Script
+### Option 1: Using the Deployment Script (Recommended)
 
 **Linux/Mac:**
 ```bash
@@ -86,60 +88,37 @@ cd google-maps-mcp-server
 ```
 
 The script will automatically:
-- Check prerequisites
-- Build the Docker image
-- Push to Google Container Registry
-- Deploy to Cloud Run
+- Check prerequisites (only gcloud needed - no Docker!)
+- Enable required APIs
+- Deploy to Cloud Run using `--source` (builds in the cloud)
 
-### Option 2: Manual Build
+### Option 2: Manual Deployment (Cloud Build)
+
+**No Docker Required!** Cloud Run will build the image in Google Cloud Build:
 
 ```bash
 # Set variables
 PROJECT_ID="your-project-id"
 SERVICE_NAME="google-maps-mcp-server"
-IMAGE_NAME="gcr.io/${PROJECT_ID}/${SERVICE_NAME}"
 
-# Build the image
-docker build -t ${IMAGE_NAME} .
+# Enable required APIs
+gcloud services enable cloudbuild.googleapis.com run.googleapis.com
 
-# Verify the image
-docker images | grep ${SERVICE_NAME}
-```
-
-## Pushing to Container Registry
-
-### 1. Configure Docker Authentication
-
-```bash
-gcloud auth configure-docker
-```
-
-### 2. Push the Image
-
-```bash
-docker push ${IMAGE_NAME}
-```
-
-This may take a few minutes depending on your internet connection.
-
-### 3. Verify Push
-
-```bash
-gcloud container images list --repository=gcr.io/${PROJECT_ID}
-```
-
-## Deploying to Cloud Run
-
-### Basic Deployment
-
-```bash
+# Deploy directly from source (builds in the cloud)
 gcloud run deploy ${SERVICE_NAME} \
-  --image ${IMAGE_NAME} \
+  --source . \
   --platform managed \
   --region us-central1 \
   --allow-unauthenticated \
   --port 8080
 ```
+
+The `--source .` flag tells Cloud Run to:
+1. Upload your source code to Cloud Build
+2. Build the Docker image in the cloud (using your Dockerfile)
+3. Deploy the built image to Cloud Run
+
+**No local Docker installation needed!**
 
 ### Advanced Deployment with Custom Settings
 
@@ -226,17 +205,20 @@ gcloud run services describe ${SERVICE_NAME} \
 
 ## Updating the Deployment
 
-### Update with New Image
+### Update with New Code
+
+Simply redeploy from source (Cloud Run rebuilds automatically):
 
 ```bash
-# Rebuild and push
-docker build -t ${IMAGE_NAME} .
-docker push ${IMAGE_NAME}
-
-# Update Cloud Run service
-gcloud run services update ${SERVICE_NAME} \
-  --image ${IMAGE_NAME} \
+# Update Cloud Run service (rebuilds in the cloud)
+gcloud run deploy ${SERVICE_NAME} \
+  --source . \
   --region us-central1
+```
+
+Or use the deployment script:
+```bash
+./deploy.sh
 ```
 
 ### Update Configuration

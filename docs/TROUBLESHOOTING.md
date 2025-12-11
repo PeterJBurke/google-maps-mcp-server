@@ -41,6 +41,7 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
      - Check that `GCP_SA_KEY` contains the complete JSON from the service account key file
 
 2. **Service Account Permissions Missing:**
+   - **Error**: `PERMISSION_DENIED: Permission 'artifactregistry.repositories.create' denied`
    - **Error**: `PERMISSION_DENIED: Permission 'artifactregistry.repositories.get' denied`
    - **Error**: "Permission denied while accessing Artifact Registry"
    - **Error**: "Permission denied" or "does not have permission"
@@ -52,9 +53,12 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
        - **Cloud Run Admin** (`roles/run.admin`)
        - **Service Account User** (`roles/iam.serviceAccountUser`)
        - **Cloud Build Editor** (`roles/cloudbuild.builds.editor`)
-       - **Artifact Registry Writer** (`roles/artifactregistry.writer`) - **This is often missing!**
+       - **Artifact Registry Repository Administrator** (`roles/artifactregistry.repoAdmin`) - **CRITICAL!**
+         - **Important:** "Artifact Registry Writer" (`roles/artifactregistry.writer`) is NOT sufficient
+         - Writer role can only push/pull images, but cannot CREATE repositories
+         - When using `--source`, Cloud Run needs to CREATE the repository if it doesn't exist
      - If any are missing, click **"+ Add role"** and add them
-     - Make sure to add **Artifact Registry Writer** - this is required for `--source` deployments
+     - **Remove "Artifact Registry Writer" if you have it** and replace with "Artifact Registry Repository Administrator"
 
 3. **APIs Not Enabled (Most Common Issue):**
    - **Error**: `PERMISSION_DENIED: Cloud Build API has not been used in project *** before or it is disabled`

@@ -45,7 +45,8 @@ jobs:
             --min-instances 0 \
             --max-instances 10 \
             --timeout 300 \
-            --project ${{ env.PROJECT_ID }}
+            --project ${{ env.PROJECT_ID }} \
+            --quiet
 
       - name: Get Service URL
         id: service-url

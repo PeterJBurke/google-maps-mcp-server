@@ -366,12 +366,14 @@ Now you need to add roles to the service account you just created:
 14. Click **"+ Add role"** again
 15. Type: `Cloud Build Editor` and select **"Cloud Build Editor"** (shows `roles/cloudbuild.builds.editor`)
 16. Click **"+ Add role"** one more time
-17. Type: `Artifact Registry Writer` and select **"Artifact Registry Writer"** (shows `roles/artifactregistry.writer`)
+17. Type: `Artifact Registry Repository Administrator` and select **"Artifact Registry Repository Administrator"** (shows `roles/artifactregistry.repoAdmin`)
+    - **Important:** This role is required to CREATE repositories (not just write to them)
+    - The "Artifact Registry Writer" role is NOT sufficient - it cannot create repositories
 18. You should now see all four roles listed in the dialog:
     - Cloud Run Admin
     - Service Account User
     - Cloud Build Editor
-    - Artifact Registry Writer
+    - Artifact Registry Repository Administrator
 19. Click the blue **"Save"** button at the bottom of the dialog
 20. The dialog will close and you'll see a success notification
 

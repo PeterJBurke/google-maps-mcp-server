@@ -344,16 +344,68 @@ gcloud iam service-accounts keys create key.json \
 - They are only accessible to GitHub Actions workflows
 - This is safe to use even in public repositories
 
-**Steps:**
+**Detailed Steps:**
+
+#### Step 1: Navigate to Secrets Page
 
 1. Go to your repository: https://github.com/PeterJBurke/google-maps-mcp-server
-2. Navigate to: **Settings** → **Secrets and variables** → **Actions**
-3. Click **New repository secret**
-4. Add two secrets:
-   - **Name**: `GCP_PROJECT_ID`
-     - **Value**: Your Google Cloud project ID
-   - **Name**: `GCP_SA_KEY`
-     - **Value**: Contents of the `key.json` file (copy the entire JSON)
+2. Click on the **Settings** tab (at the top of the repository page)
+3. In the left sidebar, find the **"Code and automation"** section
+4. Click on **"Actions"** (it has a play button icon)
+5. A dropdown menu will appear - click on **"Secrets and variables"**
+6. Click on **"Actions"** in the submenu
+7. You should now see the "Actions secrets" page
+
+#### Step 2: Add GCP_PROJECT_ID Secret
+
+1. Click the **"New repository secret"** button (green button, usually on the right side)
+2. You'll see a form with two fields:
+   - **Name** field (required, marked with *)
+   - **Secret** field (required, marked with *)
+
+3. **For the first secret:**
+   - In the **Name** field, enter exactly: `GCP_PROJECT_ID`
+     - Make sure it's all uppercase
+     - Use underscores, not hyphens
+   - In the **Secret** field, enter your Google Cloud Project ID
+     - This is the Project ID (not the project name)
+     - Example format: `my-mcp-server-123456`
+     - See [Appendix: Getting Your Google Cloud Project ID](#appendix-getting-your-google-cloud-project-id) if you need help finding it
+   - Click **"Add secret"** button (green button at the bottom)
+
+#### Step 3: Add GCP_SA_KEY Secret
+
+1. After adding the first secret, you'll be redirected back to the secrets list
+2. Click **"New repository secret"** again
+3. **For the second secret:**
+   - In the **Name** field, enter exactly: `GCP_SA_KEY`
+     - Make sure it's all uppercase
+     - Use underscores, not hyphens
+   - In the **Secret** field, paste the entire contents of your service account key JSON file
+     - Open the `key.json` file you downloaded (from Step 3 above)
+     - Select ALL the text (Ctrl+A / Cmd+A)
+     - Copy it (Ctrl+C / Cmd+C)
+     - Paste it into the Secret field (Ctrl+V / Cmd+V)
+     - The JSON should look like:
+       ```json
+       {
+         "type": "service_account",
+         "project_id": "your-project-id",
+         "private_key_id": "...",
+         "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
+         ...
+       }
+       ```
+     - Make sure you paste the ENTIRE JSON, including all the curly braces
+   - Click **"Add secret"** button
+
+#### Step 4: Verify Secrets Are Added
+
+1. You should now see both secrets in the list:
+   - `GCP_PROJECT_ID`
+   - `GCP_SA_KEY`
+2. The values are hidden (shown as dots) - this is normal and secure
+3. You can edit or delete them later if needed
 
 **After adding secrets, you can safely delete the `key.json` file from your local machine.**
 
@@ -376,52 +428,76 @@ After successful deployment:
 
 A Google Cloud Project ID is a unique identifier for your Google Cloud project. It's used to organize and manage all your Google Cloud resources.
 
+**Important:** The Project ID is different from the Project Name:
+- **Project Name**: Human-readable name you can change (e.g., "My MCP Server")
+- **Project ID**: Unique identifier that cannot be changed (e.g., `my-mcp-server-123456`)
+- **You need the Project ID** (not the name) for the GitHub secret
+
 ### Option 1: Find Your Existing Project ID
 
 If you already have a Google Cloud project:
 
-1. **Via Google Cloud Console:**
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Sign in with your Google account
-   - Look at the top of the page - the project name is displayed in the project selector
-   - Click on the project selector to see the **Project ID** (different from project name)
-   - The Project ID is usually in the format: `my-project-123456`
+#### Method A: From Project Selector (Easiest)
 
-2. **Via gcloud CLI (optional - only if you have it installed):**
-   ```bash
-   gcloud projects list
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Sign in with your Google account
+3. Look at the top of the page - you'll see a project selector dropdown
+4. Click on the project selector (it shows your current project name)
+5. A dropdown menu will appear showing all your projects
+6. For each project, you'll see:
+   - **Project Name** (in bold, larger text)
+   - **Project ID** (below the name, in smaller gray text, format: `project-id-123456`)
+7. Find your project and note the **Project ID** (the smaller text below the name)
+8. Copy this Project ID - this is what you'll use for `GCP_PROJECT_ID` secret
+
+#### Method B: From Project Settings (Most Reliable)
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Select your project from the project selector at the top
+3. Click the hamburger menu (☰) in the top left
+4. Navigate to **IAM & Admin** → **Settings**
+5. On the Settings page, you'll see:
+   - **Project name**: (your project's display name)
+   - **Project ID**: (this is what you need - format: `project-id-123456`)
+   - **Project number**: (different from Project ID)
+6. Copy the **Project ID** - this is exactly what you need
+
+#### Method C: From URL
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Select your project
+3. Look at the URL in your browser - it will contain your Project ID:
    ```
-   This shows all your projects with their Project IDs.
-   
-   **Note:** You don't need gcloud CLI - you can do everything via the web console!
+   https://console.cloud.google.com/home/dashboard?project=YOUR_PROJECT_ID
+   ```
+4. The part after `project=` is your Project ID
 
-3. **From Project Settings:**
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Select your project
-   - Go to **IAM & Admin** → **Settings**
-   - The **Project ID** is displayed at the top
+**Note:** The Project ID format is usually: lowercase letters, numbers, and hyphens (e.g., `my-mcp-server-123456`)
 
 ### Option 2: Create a New Project
 
 If you don't have a Google Cloud project yet:
 
-1. **Via Google Cloud Console:**
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Click the project selector at the top
-   - Click **New Project**
-   - Enter a **Project name** (e.g., "Google Maps MCP Server")
-   - Google will auto-generate a **Project ID** (you can edit it if needed)
-   - Click **Create**
-   - Note the **Project ID** that was created
+#### Via Google Cloud Console (Web Interface)
 
-2. **Via gcloud CLI (optional - only if you have it installed):**
-   ```bash
-   gcloud projects create YOUR_PROJECT_ID \
-     --name="Google Maps MCP Server"
-   ```
-   Replace `YOUR_PROJECT_ID` with your desired ID (must be globally unique).
-   
-   **Note:** You don't need gcloud CLI - you can create projects via the web console!
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Click the **project selector** dropdown at the top of the page
+3. Click **"New Project"** button
+4. A form will appear:
+   - **Project name**: Enter a name like "Google Maps MCP Server"
+     - This is just a display name - you can change it later
+   - **Project ID**: Google will auto-generate one based on your project name
+     - You can edit this if you want a specific ID
+     - Must be globally unique (if your desired ID is taken, add numbers)
+     - Format: lowercase letters, numbers, hyphens only
+     - Example: `google-maps-mcp-server` or `my-mcp-server-123`
+   - **Location**: Select an organization (if applicable) or leave as "No organization"
+5. Click **"Create"** button
+6. Wait a few seconds for the project to be created
+7. **Important:** After creation, note the **Project ID** that was created
+   - It will be shown in the notification
+   - Or go to **IAM & Admin** → **Settings** to see it
+   - This is what you'll use for `GCP_PROJECT_ID` secret
 
 ### Important Notes
 
@@ -446,22 +522,26 @@ If you don't have a Google Cloud project yet:
 To verify you have the correct Project ID:
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Select your project
-3. Check the URL - it should contain your Project ID:
+2. Select your project from the project selector
+3. Check the URL in your browser - it should contain your Project ID:
    ```
    https://console.cloud.google.com/home/dashboard?project=YOUR_PROJECT_ID
    ```
-4. Or go to **IAM & Admin** → **Settings** to see the Project ID
+4. Or go to **IAM & Admin** → **Settings** to see the Project ID displayed clearly
 
-### Using the Project ID
+**What the Project ID looks like:**
+- Format: `lowercase-letters-numbers-123456`
+- Usually 6-30 characters
+- Contains only lowercase letters, numbers, and hyphens
+- Example: `my-mcp-server-123456` or `google-maps-mcp-789`
 
-Once you have your Project ID, add it to GitHub Secrets:
+**Common mistakes to avoid:**
+- ❌ Using the Project Name instead of Project ID
+- ❌ Using the Project Number (different from Project ID)
+- ❌ Including spaces or special characters
+- ✅ Use the exact Project ID as shown in Settings
 
-1. Go to your repository → **Settings** → **Secrets and variables** → **Actions**
-2. Click **New repository secret**
-3. **Name**: `GCP_PROJECT_ID`
-4. **Value**: Your Project ID (e.g., `my-mcp-server-123456`)
-5. Click **Add secret**
+### Using the Project ID in GitHub Secrets
 
-That's it! Your Project ID is now securely stored in GitHub Secrets.
+Once you have your Project ID, you'll add it to GitHub Secrets. See [Step 2: Add GCP_PROJECT_ID Secret](#step-2-add-gcpprojectid-secret) above for detailed instructions on how to add it to your repository.
 

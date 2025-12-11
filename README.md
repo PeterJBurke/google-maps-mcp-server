@@ -46,16 +46,19 @@ Set up once, then every push to the repository automatically deploys:
 
 1. **Set up GitHub Secrets (Secure - Not Stored in Repository):**
    - Go to your repository: https://github.com/PeterJBurke/google-maps-mcp-server
-   - Settings → Secrets and variables → Actions
-   - Add secrets:
-     - `GCP_PROJECT_ID`: Your Google Cloud project ID
-     - `GCP_SA_KEY`: Service account key JSON (see [GitHub Actions Setup](#github-actions-setup) below)
+   - Click **Settings** tab → **Actions** (in left sidebar) → **Secrets and variables** → **Actions**
+   - Click **"New repository secret"** button
+   - Add two secrets (see detailed instructions in [Deployment Guide](docs/DEPLOYMENT.md#github-actions-setup)):
+     - **Name**: `GCP_PROJECT_ID` → **Value**: Your Google Cloud project ID (see [how to get it](docs/DEPLOYMENT.md#appendix-getting-your-google-cloud-project-id))
+     - **Name**: `GCP_SA_KEY` → **Value**: Entire contents of your service account key JSON file
    
    **Security Note:** GitHub Secrets are encrypted and stored separately by GitHub. They are:
    - ✅ NOT stored in your repository code
    - ✅ NOT visible in logs or repository history
    - ✅ Only accessible to GitHub Actions workflows
    - ✅ Safe to use even in public repositories
+   
+   **See [Deployment Guide](docs/DEPLOYMENT.md#github-actions-setup) for step-by-step instructions with detailed explanations.**
 
 2. **Deploy automatically:**
    - Push to `main` or `master` branch → automatically deploys

@@ -19,6 +19,7 @@ This guide provides step-by-step instructions for deploying the Google Maps MCP 
 - Create a [Google Cloud account](https://cloud.google.com/)
 - Enable billing (required for Cloud Run)
 - Create a new project or select an existing one
+- **Get your Project ID** - See [Appendix: Getting Your Google Cloud Project ID](#appendix-getting-your-google-cloud-project-id) below
 
 ### 2. GitHub Account
 
@@ -335,4 +336,95 @@ After successful deployment:
 2. Test the integration
 3. Monitor usage and costs
 4. Set up alerts if needed
+
+## Appendix: Getting Your Google Cloud Project ID
+
+### What is a Google Cloud Project ID?
+
+A Google Cloud Project ID is a unique identifier for your Google Cloud project. It's used to organize and manage all your Google Cloud resources.
+
+### Option 1: Find Your Existing Project ID
+
+If you already have a Google Cloud project:
+
+1. **Via Google Cloud Console:**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Sign in with your Google account
+   - Look at the top of the page - the project name is displayed in the project selector
+   - Click on the project selector to see the **Project ID** (different from project name)
+   - The Project ID is usually in the format: `my-project-123456`
+
+2. **Via gcloud CLI (if installed):**
+   ```bash
+   gcloud projects list
+   ```
+   This shows all your projects with their Project IDs.
+
+3. **From Project Settings:**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Select your project
+   - Go to **IAM & Admin** → **Settings**
+   - The **Project ID** is displayed at the top
+
+### Option 2: Create a New Project
+
+If you don't have a Google Cloud project yet:
+
+1. **Via Google Cloud Console:**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Click the project selector at the top
+   - Click **New Project**
+   - Enter a **Project name** (e.g., "Google Maps MCP Server")
+   - Google will auto-generate a **Project ID** (you can edit it if needed)
+   - Click **Create**
+   - Note the **Project ID** that was created
+
+2. **Via gcloud CLI (if installed):**
+   ```bash
+   gcloud projects create YOUR_PROJECT_ID \
+     --name="Google Maps MCP Server"
+   ```
+   Replace `YOUR_PROJECT_ID` with your desired ID (must be globally unique).
+
+### Important Notes
+
+- **Project ID vs Project Name:**
+  - **Project Name**: Can be changed, human-readable (e.g., "My MCP Server")
+  - **Project ID**: Cannot be changed, unique identifier (e.g., "my-mcp-server-123456")
+  - Use the **Project ID** (not the name) for `GCP_PROJECT_ID` secret
+
+- **Project ID Format:**
+  - Must be globally unique across all Google Cloud projects
+  - Can contain lowercase letters, numbers, and hyphens
+  - Must be 6-30 characters long
+  - Cannot be changed after creation
+
+- **Billing:**
+  - Cloud Run requires a billing account
+  - You'll be prompted to enable billing when you first use Cloud Run
+  - See [Cloud Run Pricing](https://cloud.google.com/run/pricing) for details
+
+### Verify Your Project ID
+
+To verify you have the correct Project ID:
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Select your project
+3. Check the URL - it should contain your Project ID:
+   ```
+   https://console.cloud.google.com/home/dashboard?project=YOUR_PROJECT_ID
+   ```
+4. Or go to **IAM & Admin** → **Settings** to see the Project ID
+
+### Using the Project ID
+
+Once you have your Project ID, add it to GitHub Secrets:
+
+1. Go to your repository → **Settings** → **Secrets and variables** → **Actions**
+2. Click **New repository secret**
+3. **Name**: `GCP_PROJECT_ID`
+4. **Value**: Your Project ID (e.g., `my-mcp-server-123456`)
+5. Click **Add secret**
+
+That's it! Your Project ID is now securely stored in GitHub Secrets.
 

@@ -209,16 +209,18 @@ To enable automatic deployment on every push:
 **All setup can be done via web interfaces - no local tools required!**
 
 See the detailed step-by-step instructions in [GitHub Actions Setup](docs/DEPLOYMENT.md#github-actions-setup) which includes:
+- **Enabling required APIs** (IMPORTANT - do this first!)
 - Creating service account via Google Cloud Console (web UI)
 - Granting permissions via web interface
 - Creating and downloading keys via web interface
 - Adding secrets to GitHub
 
 **Quick Summary:**
-1. Get your Project ID from [Google Cloud Console](https://console.cloud.google.com/)
-2. Create service account and download key (all via web UI)
-3. Add secrets to GitHub repository
-4. Push to repository → automatically deploys!
+1. **Enable APIs first**: [Cloud Run API](https://console.cloud.google.com/apis/library/run.googleapis.com), [Cloud Build API](https://console.cloud.google.com/apis/library/cloudbuild.googleapis.com), [Artifact Registry API](https://console.cloud.google.com/apis/library/artifactregistry.googleapis.com)
+2. Get your Project ID from [Google Cloud Console](https://console.cloud.google.com/)
+3. Create service account and download key (all via web UI)
+4. Add secrets to GitHub repository
+5. Push to repository → automatically deploys!
 
 ## License
 

@@ -271,6 +271,43 @@ To enable automatic deployment on every push (no local files or tools needed):
 
 **All steps can be done via the Google Cloud Console web interface - no command line tools required!**
 
+### Step 0: Enable Required APIs (IMPORTANT - Do This First!)
+
+**Before creating the service account, you must enable the required Google Cloud APIs:**
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Make sure your project is selected (check the project selector at the top)
+3. Click the hamburger menu (☰) in the top left
+4. Navigate to **APIs & Services** → **Library**
+5. You need to enable these three APIs. Search for and enable each one:
+
+   **Enable Cloud Run API:**
+   - In the search bar, type: `Cloud Run API`
+   - Click on **"Cloud Run API"** from the results
+   - Click the blue **"Enable"** button
+   - Wait for it to enable (you'll see a checkmark when done)
+
+   **Enable Cloud Build API:**
+   - Go back to **APIs & Services** → **Library**
+   - Search for: `Cloud Build API`
+   - Click on **"Cloud Build API"**
+   - Click the blue **"Enable"** button
+   - Wait for it to enable
+
+   **Enable Artifact Registry API:**
+   - Go back to **APIs & Services** → **Library**
+   - Search for: `Artifact Registry API`
+   - Click on **"Artifact Registry API"**
+   - Click the blue **"Enable"** button
+   - Wait for it to enable
+
+**Alternative: Enable all at once via direct links:**
+- [Enable Cloud Run API](https://console.cloud.google.com/apis/library/run.googleapis.com)
+- [Enable Cloud Build API](https://console.cloud.google.com/apis/library/cloudbuild.googleapis.com)
+- [Enable Artifact Registry API](https://console.cloud.google.com/apis/library/artifactregistry.googleapis.com)
+
+**Important:** Wait a few minutes after enabling APIs before proceeding to the next step. The APIs need time to propagate.
+
 ### Using Google Cloud Console (No Local Tools Required)
 
 #### 1. Create a Google Cloud Service Account

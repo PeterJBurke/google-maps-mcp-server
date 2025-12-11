@@ -52,15 +52,23 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
        - Cloud Build Editor
      - If missing, add them using the **"+ Add role"** button
 
-3. **APIs Not Enabled:**
-   - **Error**: "API not enabled" or "service is not available"
+3. **APIs Not Enabled (Most Common Issue):**
+   - **Error**: `PERMISSION_DENIED: Cloud Run Admin API has not been used in project *** before or it is disabled`
+   - **Error**: `API [run.googleapis.com] not enabled on project`
+   - **Error**: `API not enabled` or `service is not available`
    - **Solution**:
-     - Go to [Google Cloud Console](https://console.cloud.google.com/)
-     - Navigate to **APIs & Services** → **Library**
-     - Search for and enable these APIs:
-       - Cloud Run API
-       - Cloud Build API
-       - Artifact Registry API (if needed)
+     1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+     2. Make sure your project is selected
+     3. Navigate to **APIs & Services** → **Library**
+     4. Search for and enable these APIs (click on each, then click **"Enable"**):
+        - **Cloud Run API** (also called "Cloud Run Admin API")
+          - Direct link: [Enable Cloud Run API](https://console.cloud.google.com/apis/library/run.googleapis.com)
+        - **Cloud Build API**
+          - Direct link: [Enable Cloud Build API](https://console.cloud.google.com/apis/library/cloudbuild.googleapis.com)
+        - **Artifact Registry API**
+          - Direct link: [Enable Artifact Registry API](https://console.cloud.google.com/apis/library/artifactregistry.googleapis.com)
+     5. **Wait 2-3 minutes** after enabling for the APIs to propagate
+     6. Re-run the GitHub Actions workflow (click **"Re-run jobs"** button)
 
 4. **Billing Not Enabled:**
    - **Error**: "Billing account required" or "billing is not enabled"

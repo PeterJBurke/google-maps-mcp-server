@@ -46,12 +46,6 @@ check_prerequisites() {
         exit 1
     fi
     
-    # Check for Node.js
-    if ! command -v node &> /dev/null; then
-        print_error "Node.js is not installed. Please install it from https://nodejs.org/"
-        exit 1
-    fi
-    
     print_success "All prerequisites are installed"
 }
 

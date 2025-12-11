@@ -67,29 +67,8 @@ gcloud services enable \
 ### 1. Clone Repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/PeterJBurke/google-maps-mcp-server.git
 cd google-maps-mcp-server
-```
-
-### 2. Install Dependencies
-
-```bash
-npm install
-```
-
-### 3. Test Locally (Optional)
-
-```bash
-# Using Docker
-docker-compose up
-
-# Or directly with Node.js
-npm start
-```
-
-Test the server:
-```bash
-curl http://localhost:8080/health
 ```
 
 ## Building the Docker Image
@@ -343,7 +322,7 @@ gcloud run services describe ${SERVICE_NAME} \
 
 - Check service logs
 - Verify environment variables
-- Test locally first
+- Review Cloud Run service configuration
 
 ## Cleanup
 

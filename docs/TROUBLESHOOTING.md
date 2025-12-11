@@ -263,10 +263,15 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
 2. **Check server.js Implementation:**
    Verify the MCP protocol handler is correctly implemented.
 
-3. **Test Locally:**
+3. **Test on Cloud Run:**
    ```bash
-   npm start
-   curl -X POST http://localhost:8080/mcp \
+   # Get service URL
+   SERVICE_URL=$(gcloud run services describe google-maps-mcp-server \
+     --region us-central1 \
+     --format 'value(status.url)')
+   
+   # Test MCP endpoint
+   curl -X POST ${SERVICE_URL}/mcp \
      -H "Content-Type: application/json" \
      -d '{"jsonrpc":"2.0","method":"initialize","id":1}'
    ```

@@ -37,12 +37,6 @@ function Check-Prerequisites {
         exit 1
     }
     
-    # Check for Node.js
-    if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
-        Write-Error-Custom "Node.js is not installed. Please install it from https://nodejs.org/"
-        exit 1
-    }
-    
     Write-Success "All prerequisites are installed"
 }
 

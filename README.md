@@ -24,9 +24,7 @@ Google Maps Platform Documentation & Code Samples
 
 ### Required Tools
 
-- **Node.js** (LTS version, v18+)
-- **npm** (comes with Node.js)
-- **Docker** (for building and testing containers)
+- **Docker** (for building container images)
 - **Google Cloud SDK** (`gcloud` CLI)
 - **Git** (for cloning repository)
 
@@ -40,30 +38,14 @@ Google Maps Platform Documentation & Code Samples
 
 ## Quick Start
 
-### 1. Clone and Setup
+### 1. Clone Repository
 
 ```bash
 git clone https://github.com/PeterJBurke/google-maps-mcp-server.git
 cd google-maps-mcp-server
-npm install
 ```
 
-### 2. Test Locally
-
-```bash
-# Using Docker Compose
-docker-compose up
-
-# Or using Node.js directly
-npm start
-```
-
-Test the health endpoint:
-```bash
-curl http://localhost:8080/health
-```
-
-### 3. Deploy to Cloud Run
+### 2. Deploy to Cloud Run
 
 **Linux/Mac:**
 ```bash
@@ -98,7 +80,7 @@ gcloud run deploy google-maps-mcp-server \
   --cpu 1
 ```
 
-### 4. Configure OpenAI Platform
+### 3. Configure OpenAI Platform
 
 1. Open [OpenAI Platform](https://platform.openai.com/chat/edit?models=gpt-4.1)
 2. Click "Add MCP Server" or use the "Connect to MCP Server" modal
@@ -110,7 +92,7 @@ gcloud run deploy google-maps-mcp-server \
 
 4. Click "Connect"
 
-### 5. Test the Integration
+### 4. Test the Integration
 
 Ask ChatGPT questions like:
 - "How do I use the Places API?"
@@ -123,8 +105,7 @@ Ask ChatGPT questions like:
 google-maps-mcp-server/
 ├── README.md                 # This file
 ├── package.json              # Node.js dependencies
-├── Dockerfile                # Container configuration
-├── docker-compose.yml        # Local development setup
+├── Dockerfile                # Container configuration for Cloud Run
 ├── server.js                 # HTTP server wrapper
 ├── deploy.sh                 # Deployment script (Unix/Mac/Linux)
 ├── deploy.ps1                # Deployment script (Windows)
@@ -157,20 +138,6 @@ Default configuration:
 To customize, edit the deployment script or use `gcloud run services update`.
 
 ## Testing
-
-### Local Testing
-
-```bash
-# Health check
-curl http://localhost:8080/health
-
-# MCP endpoint test
-curl -X POST http://localhost:8080/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","method":"initialize","id":1}'
-```
-
-### Production Testing
 
 After deployment, test the Cloud Run endpoint:
 

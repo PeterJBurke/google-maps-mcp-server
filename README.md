@@ -24,12 +24,8 @@ Google Maps Platform Documentation & Code Samples
 
 ### Required Tools
 
-**For GitHub Actions (Recommended):**
-- GitHub account (no local tools needed!)
-
-**For Manual Deployment:**
-- **Google Cloud SDK** (`gcloud` CLI) - [Installation Guide](https://cloud.google.com/sdk/docs/install)
-- **Git** (only if deploying manually)
+- **GitHub account** (no local tools needed!)
+- **Google Cloud account** (for hosting the service)
 
 ### Google Cloud Setup
 
@@ -43,7 +39,7 @@ Google Maps Platform Documentation & Code Samples
 
 ### 1. Deploy to Cloud Run
 
-**Recommended: Automatic Deployment via GitHub Actions (No Local Files Needed)**
+**Automatic Deployment via GitHub Actions (No Local Files Needed)**
 
 Set up once, then every push to the repository automatically deploys:
 
@@ -58,19 +54,9 @@ Set up once, then every push to the repository automatically deploys:
    - Push to `main` or `master` branch → automatically deploys
    - Or manually trigger: Actions tab → "Deploy to Cloud Run" → Run workflow
 
-**Alternative: Manual Deployment (Only if you need to deploy manually)**
+**Note:** The deployment builds the Docker image in Google Cloud Build automatically. No local tools needed!
 
-If you need to deploy manually, you'll need to clone the repository:
-
-```bash
-git clone https://github.com/PeterJBurke/google-maps-mcp-server.git
-cd google-maps-mcp-server
-./deploy.sh
-```
-
-**Note:** The deployment uses `gcloud run deploy --source .` which builds the Docker image in Google Cloud Build. No local Docker installation needed!
-
-### 3. Configure OpenAI Platform
+### 2. Configure OpenAI Platform
 
 1. Open [OpenAI Platform](https://platform.openai.com/chat/edit?models=gpt-4.1)
 2. Click "Add MCP Server" or use the "Connect to MCP Server" modal
@@ -82,7 +68,7 @@ cd google-maps-mcp-server
 
 4. Click "Connect"
 
-### 4. Test the Integration
+### 3. Test the Integration
 
 Ask ChatGPT questions like:
 - "How do I use the Places API?"
@@ -97,11 +83,12 @@ google-maps-mcp-server/
 ├── package.json              # Node.js dependencies
 ├── Dockerfile                # Container configuration for Cloud Run
 ├── server.js                 # HTTP server wrapper
-├── deploy.sh                 # Deployment script (Unix/Mac/Linux)
-├── deploy.ps1                # Deployment script (Windows)
 ├── .dockerignore            # Docker build exclusions
 ├── .gitignore               # Git ignore patterns
 ├── .gcloudignore           # Cloud Run source exclusions
+├── .github/
+│   └── workflows/
+│       └── deploy.yml       # GitHub Actions deployment workflow
 └── docs/
     ├── DEPLOYMENT.md        # Detailed deployment guide
     ├── OPENAI_SETUP.md      # OpenAI Platform setup guide

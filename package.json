@@ -4,9 +4,7 @@
   "description": "Google Maps Platform Code Assist MCP Server for OpenAI Platform",
   "main": "server.js",
   "type": "module",
-  "scripts": {
-    "deploy": "./deploy.sh"
-  },
+  "scripts": {},
   "engines": {
     "node": ">=18.0.0"
   },

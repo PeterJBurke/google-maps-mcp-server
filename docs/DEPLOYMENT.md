@@ -20,53 +20,15 @@ This guide provides step-by-step instructions for deploying the Google Maps MCP 
 - Enable billing (required for Cloud Run)
 - Create a new project or select an existing one
 
-### 2. Install Google Cloud SDK (Only Tool Needed!)
+### 2. GitHub Account
 
-**No Docker required!** Cloud Run builds everything in the cloud using Cloud Build.
+**No local tools required!** Deployment happens automatically via GitHub Actions in the cloud.
 
-**Linux:**
-```bash
-# Download and install
-curl https://sdk.cloud.google.com | bash
-exec -l $SHELL
-gcloud init
-```
-
-**macOS:**
-```bash
-# Using Homebrew
-brew install google-cloud-sdk
-gcloud init
-```
-
-**Windows:**
-Download and run the [installer](https://cloud.google.com/sdk/docs/install)
-
-### 3. Authenticate
-
-```bash
-gcloud auth login
-gcloud auth application-default login
-```
-
-### 4. Set Project
-
-```bash
-gcloud config set project YOUR_PROJECT_ID
-```
-
-### 5. Enable Required APIs
-
-```bash
-gcloud services enable \
-  cloudbuild.googleapis.com \
-  run.googleapis.com \
-  artifactregistry.googleapis.com
-```
+You'll need a GitHub account to use GitHub Actions for automatic deployment.
 
 ## Deploying to Cloud Run
 
-### Option 1: GitHub Actions (Recommended - No Local Files)
+### GitHub Actions (Automatic Deployment - No Local Files)
 
 Automatic deployment on every push. No need to download or clone anything locally.
 
@@ -79,52 +41,12 @@ Automatic deployment on every push. No need to download or clone anything locall
    - Push to `main` or `master` branch → automatically deploys
    - Or manually trigger: Actions tab → "Deploy to Cloud Run" → Run workflow
 
-See the [GitHub Actions Setup](#github-actions-setup) section below for detailed instructions.
+The deployment workflow:
+1. GitHub Actions uploads your source code to Cloud Build
+2. Cloud Build builds the Docker image in the cloud (using your Dockerfile)
+3. Cloud Run deploys the built image automatically
 
-### Option 2: Manual Deployment Script (Requires Cloning)
-
-**Linux/Mac:**
-```bash
-./deploy.sh
-```
-
-**Windows:**
-```powershell
-.\deploy.ps1
-```
-
-The script will automatically:
-- Check prerequisites (only gcloud needed - no Docker!)
-- Enable required APIs
-- Deploy to Cloud Run using `--source` (builds in the cloud)
-
-### Option 2: Manual Deployment (Cloud Build)
-
-**No Docker Required!** Cloud Run will build the image in Google Cloud Build:
-
-```bash
-# Set variables
-PROJECT_ID="your-project-id"
-SERVICE_NAME="google-maps-mcp-server"
-
-# Enable required APIs
-gcloud services enable cloudbuild.googleapis.com run.googleapis.com
-
-# Deploy directly from source (builds in the cloud)
-gcloud run deploy ${SERVICE_NAME} \
-  --source . \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --port 8080
-```
-
-The `--source .` flag tells Cloud Run to:
-1. Upload your source code to Cloud Build
-2. Build the Docker image in the cloud (using your Dockerfile)
-3. Deploy the built image to Cloud Run
-
-**No local Docker installation needed!**
+**No local tools needed! Everything happens in the cloud.**
 
 ### Advanced Deployment with Custom Settings
 
@@ -213,19 +135,19 @@ gcloud run services describe ${SERVICE_NAME} \
 
 ### Update with New Code
 
-Simply redeploy from source (Cloud Run rebuilds automatically):
+Simply push to the repository - GitHub Actions automatically redeploys:
 
 ```bash
-# Update Cloud Run service (rebuilds in the cloud)
-gcloud run deploy ${SERVICE_NAME} \
-  --source . \
-  --region us-central1
+git add .
+git commit -m "Update code"
+git push
 ```
 
-Or use the deployment script:
-```bash
-./deploy.sh
-```
+The GitHub Actions workflow automatically:
+1. Builds a new Docker image
+2. Deploys the updated service to Cloud Run
+
+No manual steps needed!
 
 ### Update Configuration
 

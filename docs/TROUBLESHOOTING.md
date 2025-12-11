@@ -41,16 +41,20 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
      - Check that `GCP_SA_KEY` contains the complete JSON from the service account key file
 
 2. **Service Account Permissions Missing:**
+   - **Error**: `PERMISSION_DENIED: Permission 'artifactregistry.repositories.get' denied`
+   - **Error**: "Permission denied while accessing Artifact Registry"
    - **Error**: "Permission denied" or "does not have permission"
    - **Solution**:
      - Go to [Google Cloud Console](https://console.cloud.google.com/)
      - Navigate to **IAM & Admin** → **Service Accounts**
      - Click on `github-actions` service account → **Permissions** tab
-     - Click **"Manage access"** → Verify these three roles are assigned:
-       - Cloud Run Admin
-       - Service Account User
-       - Cloud Build Editor
-     - If missing, add them using the **"+ Add role"** button
+     - Click **"Manage access"** → Verify these **four** roles are assigned:
+       - **Cloud Run Admin** (`roles/run.admin`)
+       - **Service Account User** (`roles/iam.serviceAccountUser`)
+       - **Cloud Build Editor** (`roles/cloudbuild.builds.editor`)
+       - **Artifact Registry Writer** (`roles/artifactregistry.writer`) - **This is often missing!**
+     - If any are missing, click **"+ Add role"** and add them
+     - Make sure to add **Artifact Registry Writer** - this is required for `--source` deployments
 
 3. **APIs Not Enabled (Most Common Issue):**
    - **Error**: `PERMISSION_DENIED: Cloud Run Admin API has not been used in project *** before or it is disabled`

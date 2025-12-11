@@ -34,6 +34,7 @@ GitHub Secrets are **encrypted and stored separately** from your repository. The
      - `roles/run.admin` - Deploy to Cloud Run
      - `roles/iam.serviceAccountUser` - Use service accounts
      - `roles/cloudbuild.builds.editor` - Build images
+     - `roles/artifactregistry.writer` - Access Artifact Registry (required for `--source` deployments)
 
 2. **Key Rotation**
    - Rotate service account keys periodically (every 90 days recommended)

@@ -352,11 +352,17 @@ Now you need to add roles to the service account you just created:
 11. Select **"Cloud Run Admin"** from the dropdown (it should show `roles/run.admin` in smaller text)
 12. The role will be added to the list. Click **"+ Add role"** again
 13. Type: `Service Account User` and select **"Service Account User"** (shows `roles/iam.serviceAccountUser`)
-14. Click **"+ Add role"** one more time
+14. Click **"+ Add role"** again
 15. Type: `Cloud Build Editor` and select **"Cloud Build Editor"** (shows `roles/cloudbuild.builds.editor`)
-16. You should now see all three roles listed in the dialog
-17. Click the blue **"Save"** button at the bottom of the dialog
-18. The dialog will close and you'll see a success notification
+16. Click **"+ Add role"** one more time
+17. Type: `Artifact Registry Writer` and select **"Artifact Registry Writer"** (shows `roles/artifactregistry.writer`)
+18. You should now see all four roles listed in the dialog:
+    - Cloud Run Admin
+    - Service Account User
+    - Cloud Build Editor
+    - Artifact Registry Writer
+19. Click the blue **"Save"** button at the bottom of the dialog
+20. The dialog will close and you'll see a success notification
 
 #### 3. Create and Download Key
 

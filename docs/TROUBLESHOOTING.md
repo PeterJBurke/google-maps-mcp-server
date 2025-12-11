@@ -339,13 +339,24 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
    - Go to [Cloud Run Console](https://console.cloud.google.com/run)
    - Click on `google-maps-mcp-server`
    - Click the **"Logs"** tab
-   - Look for recent entries when OpenAI Platform tries to connect
+   - **IMPORTANT:** Filter for application logs, not just request logs:
+     - In the query, add: `logName=~"stdout" OR logName=~"stderr"`
+     - Or look for log entries that show our console.log messages
+   - Look for recent entries when the service starts or when OpenAI Platform tries to connect
    - Look for:
-     - Package import messages
-     - "MCP server package loaded successfully" or error messages
+     - `Package imported successfully`
+     - `Package exports: [...]`
+     - `MCP server methods: [...]`
+     - `Google Maps MCP Server running on port...`
+     - Any error messages during startup
      - Incoming request logs
      - Method calls (like "initialize" or "tools/list")
      - Any error messages or stack traces
+   
+   **If you see "readiness check failed" or "TCP probe failed":**
+   - This means the server is crashing during startup
+   - Check application logs (stdout/stderr) to see the actual error
+   - Look for import errors, initialization errors, or port binding errors
 
 2. **Verify Package Installation:**
    - Check logs for: `Failed to import @googlemaps/code-assist-mcp`

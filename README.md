@@ -31,9 +31,10 @@ Google Maps Platform Documentation & Code Samples
 
 1. Create a [Google Cloud account](https://cloud.google.com/)
 2. Enable billing (Cloud Run requires a billing account)
-3. Install Google Cloud SDK: [Installation Guide](https://cloud.google.com/sdk/docs/install)
-4. Authenticate: `gcloud auth login`
-5. Set your project: `gcloud config set project YOUR_PROJECT_ID`
+3. Create a project or select an existing one
+4. Get your Project ID (see [Deployment Guide](docs/DEPLOYMENT.md#appendix-getting-your-google-cloud-project-id))
+
+**No local tools needed!** Everything can be done via the Google Cloud Console web interface.
 
 ## Quick Start
 

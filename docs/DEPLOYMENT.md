@@ -49,23 +49,16 @@ The deployment workflow:
 
 **No local tools needed! Everything happens in the cloud.**
 
-### Advanced Deployment with Custom Settings
+### Customizing Deployment Settings
 
-```bash
-gcloud run deploy ${SERVICE_NAME} \
-  --image ${IMAGE_NAME} \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --port 8080 \
-  --memory 512Mi \
-  --cpu 1 \
-  --min-instances 0 \
-  --max-instances 10 \
-  --timeout 300 \
-  --concurrency 80 \
-  --max-instances 100
-```
+To customize deployment settings (memory, CPU, etc.), edit the `.github/workflows/deploy.yml` file in your repository. The default settings are:
+- Memory: 512Mi
+- CPU: 1
+- Min Instances: 0 (scales to zero)
+- Max Instances: 10
+- Timeout: 300 seconds
+
+You can modify these values in the workflow file and push the changes - GitHub Actions will automatically redeploy with the new settings.
 
 ### Deployment Parameters Explained
 
@@ -265,9 +258,49 @@ gcloud container images delete ${IMAGE_NAME}
 
 ## GitHub Actions Setup
 
-To enable automatic deployment on every push (no local files needed):
+To enable automatic deployment on every push (no local files or tools needed):
 
-### 1. Create a Google Cloud Service Account
+**All steps can be done via the Google Cloud Console web interface - no command line tools required!**
+
+### Option A: Using Google Cloud Console (No Local Tools - Recommended)
+
+#### 1. Create a Google Cloud Service Account
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Select your project
+3. Navigate to **IAM & Admin** → **Service Accounts**
+4. Click **Create Service Account**
+5. Enter:
+   - **Service account name**: `github-actions`
+   - **Service account ID**: `github-actions` (auto-filled)
+   - **Description**: `Service account for GitHub Actions deployment`
+6. Click **Create and Continue**
+
+#### 2. Grant Necessary Permissions
+
+1. In the **Grant this service account access to project** section, add these roles:
+   - **Cloud Run Admin** (`roles/run.admin`)
+   - **Service Account User** (`roles/iam.serviceAccountUser`)
+   - **Cloud Build Editor** (`roles/cloudbuild.builds.editor`)
+2. Click **Continue**
+3. Click **Done**
+
+#### 3. Create and Download Key
+
+1. Find the `github-actions` service account in the list
+2. Click on it to open details
+3. Go to the **Keys** tab
+4. Click **Add Key** → **Create new key**
+5. Select **JSON** format
+6. Click **Create**
+7. The key file will download automatically - save it securely
+8. Copy the entire contents of the downloaded JSON file (you'll need it for GitHub Secrets)
+
+### Option B: Using gcloud CLI (Optional - Only if you prefer command line)
+
+If you have gcloud CLI installed and prefer using it:
+
+#### 1. Create a Google Cloud Service Account
 
 ```bash
 gcloud iam service-accounts create github-actions \
@@ -275,7 +308,7 @@ gcloud iam service-accounts create github-actions \
   --project=YOUR_PROJECT_ID
 ```
 
-### 2. Grant Necessary Permissions
+#### 2. Grant Necessary Permissions
 
 ```bash
 # Allow deploying to Cloud Run
@@ -294,7 +327,7 @@ gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
   --role="roles/cloudbuild.builds.editor"
 ```
 
-### 3. Create and Download Key
+#### 3. Create and Download Key
 
 ```bash
 gcloud iam service-accounts keys create key.json \
@@ -302,7 +335,7 @@ gcloud iam service-accounts keys create key.json \
   --project=YOUR_PROJECT_ID
 ```
 
-### 4. Add to GitHub Secrets
+### 4. Add to GitHub Secrets (Both Options)
 
 **Important Security Information:**
 - GitHub Secrets are encrypted and stored separately by GitHub
@@ -354,11 +387,13 @@ If you already have a Google Cloud project:
    - Click on the project selector to see the **Project ID** (different from project name)
    - The Project ID is usually in the format: `my-project-123456`
 
-2. **Via gcloud CLI (if installed):**
+2. **Via gcloud CLI (optional - only if you have it installed):**
    ```bash
    gcloud projects list
    ```
    This shows all your projects with their Project IDs.
+   
+   **Note:** You don't need gcloud CLI - you can do everything via the web console!
 
 3. **From Project Settings:**
    - Go to [Google Cloud Console](https://console.cloud.google.com/)
@@ -379,12 +414,14 @@ If you don't have a Google Cloud project yet:
    - Click **Create**
    - Note the **Project ID** that was created
 
-2. **Via gcloud CLI (if installed):**
+2. **Via gcloud CLI (optional - only if you have it installed):**
    ```bash
    gcloud projects create YOUR_PROJECT_ID \
      --name="Google Maps MCP Server"
    ```
    Replace `YOUR_PROJECT_ID` with your desired ID (must be globally unique).
+   
+   **Note:** You don't need gcloud CLI - you can create projects via the web console!
 
 ### Important Notes
 

@@ -39,8 +39,12 @@ Automatic deployment on every push. No need to download or clone anything locall
    - Add `GCP_SA_KEY`: Service account key JSON (see [GitHub Actions Setup](#github-actions-setup) section)
 
 2. **Deploy automatically:**
-   - Push to `main` or `master` branch → automatically deploys
-   - Or manually trigger: Actions tab → "Deploy to Cloud Run" → Run workflow
+   - **Automatic**: Push code to `main` or `master` branch → automatically deploys
+   - **Manual trigger** (if you want to deploy without pushing code):
+     - Go to repository → Click **"Actions"** tab (at the top, next to "Pull requests")
+     - In the left sidebar, click **"Deploy to Cloud Run"**
+     - Click the **"Run workflow"** button (dropdown on the right)
+     - Select branch (`master` or `main`) → Click **"Run workflow"**
 
 The deployment workflow:
 1. GitHub Actions uploads your source code to Cloud Build
@@ -404,8 +408,25 @@ Now you need to add roles to the service account you just created:
 
 ### 5. Deploy Automatically
 
-- **Automatic**: Push to `main` or `master` branch → automatically deploys
-- **Manual**: Go to **Actions** tab → **Deploy to Cloud Run** → **Run workflow**
+**Automatic Deployment:**
+- Simply push code to the `main` or `master` branch
+- GitHub Actions will automatically detect the push and start the deployment
+- Go to the **Actions** tab to watch the deployment progress
+
+**Manual Deployment (Trigger Manually):**
+
+If you want to trigger a deployment without pushing code:
+
+1. Go to your repository: https://github.com/PeterJBurke/google-maps-mcp-server
+2. Click on the **"Actions"** tab at the top of the repository (next to "Pull requests", "Projects", etc.)
+3. In the left sidebar, you'll see a list of workflows - click on **"Deploy to Cloud Run"**
+4. You'll see a list of workflow runs (if any) and a button on the right side that says **"Run workflow"**
+5. Click the **"Run workflow"** button (it's a dropdown button)
+6. A dropdown will appear:
+   - Make sure **"Use workflow from"** shows `Branch: master` (or `Branch: main`)
+   - Click the green **"Run workflow"** button in the dropdown
+7. The workflow will start running - you'll see it appear in the workflow runs list
+8. Click on the new workflow run to see the deployment progress in real-time
 
 ## Next Steps
 

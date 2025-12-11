@@ -272,23 +272,42 @@ To enable automatic deployment on every push (no local files or tools needed):
 #### 1. Create a Google Cloud Service Account
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Select your project
-3. Navigate to **IAM & Admin** → **Service Accounts**
-4. Click **Create Service Account**
-5. Enter:
-   - **Service account name**: `github-actions`
-   - **Service account ID**: `github-actions` (auto-filled)
-   - **Description**: `Service account for GitHub Actions deployment`
-6. Click **Create and Continue**
+2. Select your project from the project selector at the top
+3. Click the hamburger menu (☰) in the top left
+4. Navigate to **IAM & Admin** → **Service Accounts**
+5. Click **Create Service Account** button (usually at the top)
+6. **Step 1: Service account details:**
+   - **Service account name**: Enter `github-actions`
+   - **Service account ID**: Will auto-fill as `github-actions` (you can change if needed)
+   - **Description** (optional): `Service account for GitHub Actions deployment`
+   - Click **Create and Continue**
 
 #### 2. Grant Necessary Permissions
 
-1. In the **Grant this service account access to project** section, add these roles:
-   - **Cloud Run Admin** (`roles/run.admin`)
-   - **Service Account User** (`roles/iam.serviceAccountUser`)
-   - **Cloud Build Editor** (`roles/cloudbuild.builds.editor`)
-2. Click **Continue**
-3. Click **Done**
+After clicking "Create and Continue", you'll see **Step 2: Grant this service account access to project** (or similar):
+
+1. Click **"Select a role"** dropdown (or **"Add another role"** if you need multiple)
+2. Add these three roles one by one:
+   
+   **First role:**
+   - Click the role dropdown
+   - Type or search for: `Cloud Run Admin`
+   - Select **"Cloud Run Admin"** (or `roles/run.admin`)
+   - Click **Add another role** (or the role dropdown again)
+   
+   **Second role:**
+   - Type or search for: `Service Account User`
+   - Select **"Service Account User"** (or `roles/iam.serviceAccountUser`)
+   - Click **Add another role** (or the role dropdown again)
+   
+   **Third role:**
+   - Type or search for: `Cloud Build Editor`
+   - Select **"Cloud Build Editor"** (or `roles/cloudbuild.builds.editor`)
+
+3. After adding all three roles, click **Continue**
+
+4. **Step 3: Grant users access to this service account** (optional):
+   - You can skip this step - just click **Done**
 
 #### 3. Create and Download Key
 

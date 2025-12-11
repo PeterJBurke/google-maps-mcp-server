@@ -42,9 +42,20 @@ Google Maps Platform Documentation & Code Samples
 
 **Automatic Deployment via GitHub Actions (No Local Files Needed)**
 
+⚠️ **IMPORTANT: Enable APIs First!** Before setting up secrets, you must enable required APIs. See [Step 0: Enable Required APIs](docs/DEPLOYMENT.md#step-0-enable-required-apis-important---do-this-first) for detailed instructions.
+
 Set up once, then every push to the repository automatically deploys:
 
-1. **Set up GitHub Secrets (Secure - Not Stored in Repository):**
+1. **Enable Required APIs (Do This First!):**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Navigate to **APIs & Services** → **Library**
+   - Enable these three APIs:
+     - [Cloud Run API](https://console.cloud.google.com/apis/library/run.googleapis.com)
+     - [Cloud Build API](https://console.cloud.google.com/apis/library/cloudbuild.googleapis.com) ⚠️ **Critical**
+     - [Artifact Registry API](https://console.cloud.google.com/apis/library/artifactregistry.googleapis.com)
+   - Wait 2-3 minutes after enabling
+
+2. **Set up GitHub Secrets (Secure - Not Stored in Repository):**
    - Go to your repository: https://github.com/PeterJBurke/google-maps-mcp-server
    - Click **Settings** tab → **Actions** (in left sidebar) → **Secrets and variables** → **Actions**
    - Click **"New repository secret"** button
@@ -60,7 +71,7 @@ Set up once, then every push to the repository automatically deploys:
    
    **See [Deployment Guide](docs/DEPLOYMENT.md#github-actions-setup) for step-by-step instructions with detailed explanations.**
 
-2. **Deploy automatically:**
+3. **Deploy automatically:**
    - **Automatic**: Push code to `main` or `master` branch → automatically deploys
    - **Manual trigger** (to deploy without pushing code):
      - Go to repository → Click **"Actions"** tab at the TOP (in main navigation, not Settings)
@@ -69,7 +80,7 @@ Set up once, then every push to the repository automatically deploys:
 
 **Note:** The deployment builds the Docker image in Google Cloud Build automatically. No local tools needed!
 
-### 2. Configure OpenAI Platform
+### 3. Configure OpenAI Platform
 
 1. Open [OpenAI Platform](https://platform.openai.com/chat/edit?models=gpt-4.1)
 2. Click "Add MCP Server" or use the "Connect to MCP Server" modal
@@ -81,7 +92,7 @@ Set up once, then every push to the repository automatically deploys:
 
 4. Click "Connect"
 
-### 3. Test the Integration
+### 4. Test the Integration
 
 Ask ChatGPT questions like:
 - "How do I use the Places API?"

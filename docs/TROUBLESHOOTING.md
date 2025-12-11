@@ -57,7 +57,9 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
      - Make sure to add **Artifact Registry Writer** - this is required for `--source` deployments
 
 3. **APIs Not Enabled (Most Common Issue):**
+   - **Error**: `PERMISSION_DENIED: Cloud Build API has not been used in project *** before or it is disabled`
    - **Error**: `PERMISSION_DENIED: Cloud Run Admin API has not been used in project *** before or it is disabled`
+   - **Error**: `API [cloudbuild.googleapis.com] not enabled on project`
    - **Error**: `API [run.googleapis.com] not enabled on project`
    - **Error**: `API not enabled` or `service is not available`
    - **Solution**:
@@ -67,12 +69,19 @@ Common issues and solutions for the Google Maps MCP Server deployment and OpenAI
      4. Search for and enable these APIs (click on each, then click **"Enable"**):
         - **Cloud Run API** (also called "Cloud Run Admin API")
           - Direct link: [Enable Cloud Run API](https://console.cloud.google.com/apis/library/run.googleapis.com)
-        - **Cloud Build API**
+          - **Required for**: Deploying services to Cloud Run
+        - **Cloud Build API** ⚠️ **CRITICAL**
           - Direct link: [Enable Cloud Build API](https://console.cloud.google.com/apis/library/cloudbuild.googleapis.com)
+          - **Required for**: Building Docker images from source (`--source` flag)
+          - **Error if missing**: `PERMISSION_DENIED: Cloud Build API has not been used in project`
         - **Artifact Registry API**
           - Direct link: [Enable Artifact Registry API](https://console.cloud.google.com/apis/library/artifactregistry.googleapis.com)
-     5. **Wait 2-3 minutes** after enabling for the APIs to propagate
-     6. Re-run the GitHub Actions workflow (click **"Re-run jobs"** button)
+          - **Required for**: Storing Docker images built from source
+     5. **Verify APIs are enabled:**
+        - Go to **APIs & Services** → **Enabled APIs**
+        - Make sure all three APIs show as "Enabled"
+     6. **Wait 2-3 minutes** after enabling for the APIs to propagate to all systems
+     7. Re-run the GitHub Actions workflow (click **"Re-run jobs"** button)
 
 4. **Billing Not Enabled:**
    - **Error**: "Billing account required" or "billing is not enabled"

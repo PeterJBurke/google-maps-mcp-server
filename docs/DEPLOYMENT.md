@@ -271,7 +271,9 @@ To enable automatic deployment on every push (no local files or tools needed):
 
 **All steps can be done via the Google Cloud Console web interface - no command line tools required!**
 
-### Step 0: Enable Required APIs (IMPORTANT - Do This First!)
+### ⚠️ Step 0: Enable Required APIs (CRITICAL - Must Do This First!)
+
+**⚠️ IMPORTANT: You MUST enable these APIs BEFORE creating the service account or the deployment will fail!**
 
 **Before creating the service account, you must enable the required Google Cloud APIs:**
 
@@ -287,12 +289,13 @@ To enable automatic deployment on every push (no local files or tools needed):
    - Click the blue **"Enable"** button
    - Wait for it to enable (you'll see a checkmark when done)
 
-   **Enable Cloud Build API:**
+   **Enable Cloud Build API (REQUIRED for source deployments):**
    - Go back to **APIs & Services** → **Library**
    - Search for: `Cloud Build API`
    - Click on **"Cloud Build API"**
    - Click the blue **"Enable"** button
    - Wait for it to enable
+   - **Note:** This API is critical - without it, you'll get: `PERMISSION_DENIED: Cloud Build API has not been used in project`
 
    **Enable Artifact Registry API:**
    - Go back to **APIs & Services** → **Library**
@@ -306,7 +309,15 @@ To enable automatic deployment on every push (no local files or tools needed):
 - [Enable Cloud Build API](https://console.cloud.google.com/apis/library/cloudbuild.googleapis.com)
 - [Enable Artifact Registry API](https://console.cloud.google.com/apis/library/artifactregistry.googleapis.com)
 
-**Important:** Wait a few minutes after enabling APIs before proceeding to the next step. The APIs need time to propagate.
+**⚠️ CRITICAL: Wait 2-3 minutes after enabling APIs before proceeding to the next step.** The APIs need time to propagate to all Google Cloud systems. If you proceed too quickly, you may still get "API not enabled" errors.
+
+**How to verify APIs are enabled:**
+1. Go to **APIs & Services** → **Enabled APIs**
+2. You should see all three APIs listed:
+   - Cloud Run API
+   - Cloud Build API
+   - Artifact Registry API
+3. If any are missing, go back and enable them
 
 ### Using Google Cloud Console (No Local Tools Required)
 

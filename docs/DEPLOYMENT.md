@@ -64,18 +64,24 @@ gcloud services enable \
   artifactregistry.googleapis.com
 ```
 
-## Initial Setup
-
-### 1. Clone Repository
-
-```bash
-git clone https://github.com/PeterJBurke/google-maps-mcp-server.git
-cd google-maps-mcp-server
-```
-
 ## Deploying to Cloud Run
 
-### Option 1: Using the Deployment Script (Recommended)
+### Option 1: GitHub Actions (Recommended - No Local Files)
+
+Automatic deployment on every push. No need to download or clone anything locally.
+
+1. **Set up GitHub Secrets** (one-time setup):
+   - Repository → Settings → Secrets and variables → Actions
+   - Add `GCP_PROJECT_ID`: Your Google Cloud project ID
+   - Add `GCP_SA_KEY`: Service account key JSON (see [GitHub Actions Setup](#github-actions-setup) section)
+
+2. **Deploy automatically:**
+   - Push to `main` or `master` branch → automatically deploys
+   - Or manually trigger: Actions tab → "Deploy to Cloud Run" → Run workflow
+
+See the [GitHub Actions Setup](#github-actions-setup) section below for detailed instructions.
+
+### Option 2: Manual Deployment Script (Requires Cloning)
 
 **Linux/Mac:**
 ```bash
@@ -333,6 +339,61 @@ gcloud container images delete ${IMAGE_NAME}
 # Optionally delete project (careful!)
 # gcloud projects delete ${PROJECT_ID}
 ```
+
+## GitHub Actions Setup
+
+To enable automatic deployment on every push (no local files needed):
+
+### 1. Create a Google Cloud Service Account
+
+```bash
+gcloud iam service-accounts create github-actions \
+  --display-name="GitHub Actions Service Account" \
+  --project=YOUR_PROJECT_ID
+```
+
+### 2. Grant Necessary Permissions
+
+```bash
+# Allow deploying to Cloud Run
+gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
+  --member="serviceAccount:github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/run.admin"
+
+# Allow using service accounts
+gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
+  --member="serviceAccount:github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/iam.serviceAccountUser"
+
+# Allow building images
+gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
+  --member="serviceAccount:github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/cloudbuild.builds.editor"
+```
+
+### 3. Create and Download Key
+
+```bash
+gcloud iam service-accounts keys create key.json \
+  --iam-account=github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com \
+  --project=YOUR_PROJECT_ID
+```
+
+### 4. Add to GitHub Secrets
+
+1. Go to your repository: https://github.com/PeterJBurke/google-maps-mcp-server
+2. Navigate to: **Settings** → **Secrets and variables** → **Actions**
+3. Click **New repository secret**
+4. Add two secrets:
+   - **Name**: `GCP_PROJECT_ID`
+     - **Value**: Your Google Cloud project ID
+   - **Name**: `GCP_SA_KEY`
+     - **Value**: Contents of the `key.json` file (copy the entire JSON)
+
+### 5. Deploy Automatically
+
+- **Automatic**: Push to `main` or `master` branch → automatically deploys
+- **Manual**: Go to **Actions** tab → **Deploy to Cloud Run** → **Run workflow**
 
 ## Next Steps
 

@@ -24,8 +24,12 @@ Google Maps Platform Documentation & Code Samples
 
 ### Required Tools
 
+**For GitHub Actions (Recommended):**
+- GitHub account (no local tools needed!)
+
+**For Manual Deployment:**
 - **Google Cloud SDK** (`gcloud` CLI) - [Installation Guide](https://cloud.google.com/sdk/docs/install)
-- **Git** (for cloning repository - optional, can also deploy directly from GitHub)
+- **Git** (only if deploying manually)
 
 ### Google Cloud Setup
 
@@ -39,53 +43,32 @@ Google Maps Platform Documentation & Code Samples
 
 ### 1. Deploy to Cloud Run
 
-You can deploy directly from the repository without cloning locally, or clone first:
+**Recommended: Automatic Deployment via GitHub Actions (No Local Files Needed)**
 
-**Option A: Deploy from GitHub (No local files needed):**
-```bash
-gcloud run deploy google-maps-mcp-server \
-  --source https://github.com/PeterJBurke/google-maps-mcp-server.git \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated
-```
+Set up once, then every push to the repository automatically deploys:
 
-**Option B: Clone and Deploy:**
+1. **Set up GitHub Secrets:**
+   - Go to your repository: https://github.com/PeterJBurke/google-maps-mcp-server
+   - Settings → Secrets and variables → Actions
+   - Add secrets:
+     - `GCP_PROJECT_ID`: Your Google Cloud project ID
+     - `GCP_SA_KEY`: Service account key JSON (see [GitHub Actions Setup](#github-actions-setup) below)
+
+2. **Deploy automatically:**
+   - Push to `main` or `master` branch → automatically deploys
+   - Or manually trigger: Actions tab → "Deploy to Cloud Run" → Run workflow
+
+**Alternative: Manual Deployment (Only if you need to deploy manually)**
+
+If you need to deploy manually, you'll need to clone the repository:
+
 ```bash
 git clone https://github.com/PeterJBurke/google-maps-mcp-server.git
 cd google-maps-mcp-server
-```
-
-**Linux/Mac:**
-```bash
 ./deploy.sh
 ```
 
-**Windows:**
-```powershell
-.\deploy.ps1
-```
-
-**Manual Deployment (Cloud Build - No Docker Required):**
-```bash
-# Set your project
-gcloud config set project YOUR_PROJECT_ID
-
-# Enable required APIs
-gcloud services enable cloudbuild.googleapis.com run.googleapis.com
-
-# Deploy directly from source (builds in the cloud)
-gcloud run deploy google-maps-mcp-server \
-  --source . \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --port 8080 \
-  --memory 512Mi \
-  --cpu 1
-```
-
-**Note:** The `--source .` flag tells Cloud Run to build the Docker image in Google Cloud Build. No local Docker installation needed!
+**Note:** The deployment uses `gcloud run deploy --source .` which builds the Docker image in Google Cloud Build. No local Docker installation needed!
 
 ### 3. Configure OpenAI Platform
 
@@ -219,6 +202,42 @@ Common issues:
 - [OpenAI Platform Setup](docs/OPENAI_SETUP.md)
 - [Troubleshooting Guide](docs/TROUBLESHOOTING.md)
 - [Google Maps Platform MCP Documentation](https://developers.google.com/maps/ai/mcp)
+
+## GitHub Actions Setup
+
+To enable automatic deployment on every push:
+
+1. **Create a Google Cloud Service Account:**
+   ```bash
+   gcloud iam service-accounts create github-actions \
+     --display-name="GitHub Actions Service Account"
+   ```
+
+2. **Grant necessary permissions:**
+   ```bash
+   gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
+     --member="serviceAccount:github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
+     --role="roles/run.admin"
+   
+   gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
+     --member="serviceAccount:github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
+     --role="roles/iam.serviceAccountUser"
+   ```
+
+3. **Create and download key:**
+   ```bash
+   gcloud iam service-accounts keys create key.json \
+     --iam-account=github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com
+   ```
+
+4. **Add to GitHub Secrets:**
+   - Repository → Settings → Secrets and variables → Actions
+   - Add `GCP_PROJECT_ID`: Your project ID
+   - Add `GCP_SA_KEY`: Contents of `key.json` file
+
+5. **Deploy automatically:**
+   - Push to `main` or `master` branch
+   - Or manually trigger from Actions tab
 
 ## License
 

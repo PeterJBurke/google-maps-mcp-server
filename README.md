@@ -229,6 +229,7 @@ Common issues:
 ## Documentation
 
 - [Detailed Deployment Guide](docs/DEPLOYMENT.md)
+- [**Google Maps Setup & Authentication Guide**](docs/GOOGLE_MAPS_SETUP.md) (Recommended)
 - [OpenAI Platform Setup](docs/OPENAI_SETUP.md)
 - [Security Guide](docs/SECURITY.md) - **Important: Read about GitHub Secrets security**
 - [Troubleshooting Guide](docs/TROUBLESHOOTING.md)
